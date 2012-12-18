@@ -1,22 +1,19 @@
 package com.michelin.droid.parsers;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.michelin.droid.Droid;
 import com.michelin.droid.error.DroidError;
 import com.michelin.droid.error.DroidParseException;
 import com.michelin.droid.types.DroidType;
 import com.michelin.droid.types.Group;
+import com.michelin.droid.util.EvtLog;
 
 @SuppressWarnings("rawtypes")
 public class GroupParser extends AbstractParser<Group> {
-    private static final Logger LOG = Logger.getLogger(GroupParser.class.getCanonicalName());
-    private static final boolean DEBUG = Droid.PARSER_DEBUG;
+	public static final String TAG = GroupParser.class.getSimpleName();
 
     private Parser<? extends DroidType> mSubParser;
 
@@ -34,7 +31,7 @@ public class GroupParser extends AbstractParser<Group> {
         while (parser.nextTag() == XmlPullParser.START_TAG) {
             DroidType item = this.mSubParser.parse(parser);
             if(item != null) {
-            	if (DEBUG) LOG.log(Level.FINE, "adding item: " + item);
+            	EvtLog.i(GroupParser.class, TAG, "adding item: " + item);
                 group.add(item);
             }
         }

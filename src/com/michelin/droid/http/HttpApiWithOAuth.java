@@ -1,8 +1,6 @@
 package com.michelin.droid.http;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
@@ -14,17 +12,16 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import com.michelin.droid.Droid;
 import com.michelin.droid.error.DroidCredentialsException;
 import com.michelin.droid.error.DroidError;
 import com.michelin.droid.error.DroidException;
 import com.michelin.droid.error.DroidParseException;
 import com.michelin.droid.parsers.Parser;
 import com.michelin.droid.types.DroidType;
+import com.michelin.droid.util.EvtLog;
 
 public class HttpApiWithOAuth extends AbstractHttpApi {
-    protected static final Logger LOG = Logger.getLogger(HttpApiWithOAuth.class.getCanonicalName());
-    protected static final boolean DEBUG = Droid.DEBUG;
+	public static final String TAG = HttpApiWithOAuth.class.getSimpleName();
 
     private OAuthConsumer mConsumer;
 
@@ -35,21 +32,21 @@ public class HttpApiWithOAuth extends AbstractHttpApi {
     public DroidType doHttpRequest(HttpRequestBase httpRequest,
             Parser<? extends DroidType> parser) throws DroidCredentialsException,
             DroidParseException, DroidException, IOException {
-        if (DEBUG) LOG.log(Level.FINE, "doHttpRequest: " + httpRequest.getURI());
-            try {
-                if (DEBUG) LOG.log(Level.FINE, "Signing request: " + httpRequest.getURI());
-                if (DEBUG) LOG.log(Level.FINE, "Consumer: " + mConsumer.getConsumerKey() + ", "
-                        + mConsumer.getConsumerSecret());
-                if (DEBUG) LOG.log(Level.FINE, "Token: " + mConsumer.getToken() + ", "
-                        + mConsumer.getTokenSecret());
-                mConsumer.sign(httpRequest);
-            } catch (OAuthMessageSignerException e) {
-                if (DEBUG) LOG.log(Level.FINE, "OAuthMessageSignerException", e);
-                throw new RuntimeException(e);
-            } catch (OAuthExpectationFailedException e) {
-                if (DEBUG) LOG.log(Level.FINE, "OAuthExpectationFailedException", e);
-                throw new RuntimeException(e);
-            }
+        EvtLog.i(HttpApiWithOAuth.class, TAG, "doHttpRequest: " + httpRequest.getURI());
+        try {
+            EvtLog.i(HttpApiWithOAuth.class, TAG, "Signing request: " + httpRequest.getURI());
+            EvtLog.i(HttpApiWithOAuth.class, TAG, "Consumer: " + mConsumer.getConsumerKey() + ", "
+                    + mConsumer.getConsumerSecret());
+            EvtLog.i(HttpApiWithOAuth.class, TAG, "Token: " + mConsumer.getToken() + ", "
+                    + mConsumer.getTokenSecret());
+            mConsumer.sign(httpRequest);
+        } catch (OAuthMessageSignerException e) {
+            EvtLog.e(e, TAG, "OAuthMessageSignerException");
+            throw new RuntimeException(e);
+        } catch (OAuthExpectationFailedException e) {
+            EvtLog.e(e, TAG, "OAuthExpectationFailedException");
+            throw new RuntimeException(e);
+        }
         return executeHttpRequest(httpRequest, parser);
     }
 
@@ -65,7 +62,7 @@ public class HttpApiWithOAuth extends AbstractHttpApi {
     public void setOAuthTokenWithSecret(String token, String tokenSecret) {
         verifyConsumer();
         if (token == null && tokenSecret == null) {
-            if (DEBUG) LOG.log(Level.FINE, "Resetting consumer due to null token/secret.");
+            EvtLog.i(HttpApiWithOAuth.class, TAG, "Resetting consumer due to null token/secret.");
             String consumerKey = mConsumer.getConsumerKey();
             String consumerSecret = mConsumer.getConsumerSecret();
             mConsumer = new CommonsHttpOAuthConsumer(consumerKey, consumerSecret,

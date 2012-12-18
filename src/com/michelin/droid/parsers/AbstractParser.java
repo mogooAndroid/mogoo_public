@@ -6,23 +6,24 @@ package com.michelin.droid.parsers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import com.michelin.droid.Droid;
+import com.michelin.droid.app.DroidApplicationBase;
 import com.michelin.droid.error.DroidError;
 import com.michelin.droid.error.DroidParseException;
 import com.michelin.droid.types.DroidType;
+import com.michelin.droid.util.EvtLog;
 
 public abstract class AbstractParser<T extends DroidType> implements Parser<T> {
-    private static final Logger LOG = Logger.getLogger(AbstractParser.class.getCanonicalName());
-    private static final boolean DEBUG = Droid.PARSER_DEBUG;
-
+	public static final String TAG = AbstractParser.class.getSimpleName();
+	private static final boolean IS_DEVELOPING = DroidApplicationBase.IS_DEVELOPING;
+	
     private static XmlPullParserFactory sFactory;
     static {
         try {
@@ -49,10 +50,10 @@ public abstract class AbstractParser<T extends DroidType> implements Parser<T> {
             }
             return parseInner(parser);
         } catch (IOException e) {
-            if (DEBUG) LOG.log(Level.FINE, "IOException", e);
+            EvtLog.e(e, TAG, "IOException");
             throw new DroidParseException(e.getMessage());
         } catch (XmlPullParserException e) {
-            if (DEBUG) LOG.log(Level.FINE, "XmlPullParserException", e);
+            EvtLog.e(e, TAG, "XmlPullParserException");
             throw new DroidParseException(e.getMessage());
         }
     }
@@ -61,21 +62,18 @@ public abstract class AbstractParser<T extends DroidType> implements Parser<T> {
         XmlPullParser parser;
         try {
             parser = sFactory.newPullParser();
-            if (DEBUG) {
-                StringBuffer sb = new StringBuffer();
-                if (DEBUG) {
-                    while (true) {
-                        final int ch = is.read();
-                        if (ch < 0) {
-                            break;
-                        } else {
-                            sb.append((char)ch);
-                        }
-                    }
-                    is.close();
-                    LOG.log(Level.FINE, sb.toString());
-                }
-                parser.setInput(new StringReader(sb.toString()));
+            if (IS_DEVELOPING) {
+				Reader reader = new InputStreamReader(is, "UTF-8");
+				StringBuilder sb = new StringBuilder();
+				// read content
+				int c;
+				while ((c = reader.read()) != -1) {
+					sb.append((char) c);
+				}
+				reader.close();
+				is.close();
+				EvtLog.i(AbstractParser.class, TAG, sb.toString());
+				parser.setInput(new StringReader(sb.toString()));
             } else {
                 parser.setInput(is, null);
             }

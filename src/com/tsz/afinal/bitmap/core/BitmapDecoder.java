@@ -39,6 +39,7 @@ public class BitmapDecoder {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
+        options.inPurgeable = true;
         BitmapFactory.decodeResource(res, resId, options);
 
         // Calculate inSampleSize
@@ -63,6 +64,7 @@ public class BitmapDecoder {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
+        options.inPurgeable = true;
         BitmapFactory.decodeFile(filename, options);
 
         // Calculate inSampleSize
@@ -87,6 +89,7 @@ public class BitmapDecoder {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
+        options.inPurgeable = true;
         BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
 
         // Calculate inSampleSize

@@ -1,20 +1,18 @@
-package com.michelin.droid.parsers;
+package com.michelin.droidmi.parsers;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.michelin.droid.Droid;
 import com.michelin.droid.error.DroidError;
 import com.michelin.droid.error.DroidParseException;
-import com.michelin.droid.types.Credentials;
+import com.michelin.droid.parsers.AbstractParser;
+import com.michelin.droid.util.EvtLog;
+import com.michelin.droidmi.types.Credentials;
 
 public class CredentialsParser extends AbstractParser<Credentials> {
-    private static final Logger LOG = Logger.getLogger(CredentialsParser.class.getCanonicalName());
-    private static final boolean DEBUG = Droid.PARSER_DEBUG;
+	public static final String TAG = CredentialsParser.class.getSimpleName();
 
     @Override
     public Credentials parseInner(XmlPullParser parser) throws XmlPullParserException, IOException,
@@ -33,7 +31,8 @@ public class CredentialsParser extends AbstractParser<Credentials> {
 
             } else {
                 // Consume something we don't understand.
-                if (DEBUG) LOG.log(Level.FINE, "Found tag that we don't recognize: " + name);
+				EvtLog.i(CredentialsParser.class, TAG,
+						"Found tag that we don't recognize: " + name);
                 skipSubTree(parser);
             }
         }

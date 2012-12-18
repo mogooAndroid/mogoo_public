@@ -1,8 +1,9 @@
-package com.michelin.droid.types;
+package com.michelin.droidmi.types;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.michelin.droid.types.DroidType;
 import com.michelin.droid.util.ParcelUtils;
 
 public class Topic implements DroidType, Parcelable {

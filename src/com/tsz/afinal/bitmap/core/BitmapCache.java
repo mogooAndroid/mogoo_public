@@ -232,10 +232,7 @@ public class BitmapCache {
      * this includes disk access so this should not be executed on the main/UI thread.
      */
     public void clearCache() {
-        if (mMemoryCache != null) {
-            mMemoryCache.evictAll();
-        }
-
+    	clearMemoryCache();
         synchronized (mDiskCacheLock) {
             mDiskCacheStarting = true;
             if (mDiskLruCache != null && !mDiskLruCache.isClosed()) {
@@ -247,6 +244,12 @@ public class BitmapCache {
                 mDiskLruCache = null;
                 initDiskCache();
             }
+        }
+    }
+    
+    public void clearMemoryCache(){
+    	if (mMemoryCache != null) {
+            mMemoryCache.evictAll();
         }
     }
 

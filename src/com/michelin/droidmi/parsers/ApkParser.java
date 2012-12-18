@@ -1,20 +1,18 @@
-package com.michelin.droid.parsers;
+package com.michelin.droidmi.parsers;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.michelin.droid.Droid;
 import com.michelin.droid.error.DroidError;
 import com.michelin.droid.error.DroidParseException;
-import com.michelin.droid.types.Apk;
+import com.michelin.droid.parsers.AbstractParser;
+import com.michelin.droid.util.EvtLog;
+import com.michelin.droidmi.types.Apk;
 
 public class ApkParser extends AbstractParser<Apk> {
-    private static final Logger LOG = Logger.getLogger(ApkParser.class.getCanonicalName());
-    private static final boolean DEBUG = Droid.PARSER_DEBUG;
+	public static final String TAG = ApkParser.class.getSimpleName();
     /*    	
 	<rc id='13544'>
 		<n><![CDATA[墨迹天气]]></n>
@@ -64,9 +62,8 @@ public class ApkParser extends AbstractParser<Apk> {
 				apk.setIconUrl(parser.nextText());
 			} else {
 				// Consume something we don't understand.
-				if (DEBUG)
-					LOG.log(Level.FINE, "Found tag that we don't recognize: "
-							+ name);
+				EvtLog.i(ApkParser.class, TAG,
+						"Found tag that we don't recognize: " + name);
 				skipSubTree(parser);
 			}
 			eventType = parser.nextTag();

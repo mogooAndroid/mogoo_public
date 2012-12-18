@@ -16,15 +16,16 @@
 
 package com.michelin.droidmi.util;
 
+import java.io.FileDescriptor;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import java.io.FileDescriptor;
+import com.michelin.droidmi.data.Constants;
 
-import com.michelin.droidmi.DroidmiSettings;
 
 /**
  * A simple subclass of {@link ImageWorker} that resizes images from resources given a target width
@@ -33,7 +34,7 @@ import com.michelin.droidmi.DroidmiSettings;
  */
 public class ImageResizer extends ImageWorker {
     private static final String TAG = "ImageResizer";
-    private static final boolean DEBUG = DroidmiSettings.DEBUG;
+    private static final boolean IS_DEVELOPING = Constants.IS_DEVELOPING;
     protected int mImageWidth;
     protected int mImageHeight;
 
@@ -88,7 +89,7 @@ public class ImageResizer extends ImageWorker {
      * @return
      */
     private Bitmap processBitmap(int resId) {
-        if (DEBUG) {
+        if (IS_DEVELOPING) {
             Log.d(TAG, "processBitmap - " + resId);
         }
         return decodeSampledBitmapFromResource(mResources, resId, mImageWidth, mImageHeight);

@@ -16,6 +16,8 @@
 
 package com.michelin.droidmi.util;
 
+import java.lang.ref.WeakReference;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -27,9 +29,8 @@ import android.graphics.drawable.TransitionDrawable;
 import android.util.Log;
 import android.widget.ImageView;
 
-import java.lang.ref.WeakReference;
+import com.michelin.droidmi.data.Constants;
 
-import com.michelin.droidmi.DroidmiSettings;
 
 /**
  * This class wraps up completing some arbitrary long running work when loading a bitmap to an
@@ -38,7 +39,7 @@ import com.michelin.droidmi.DroidmiSettings;
  */
 public abstract class ImageWorker {
     private static final String TAG = "ImageWorker";
-    private static final boolean DEBUG = DroidmiSettings.DEBUG;
+    private static final boolean IS_DEVELOPING = Constants.IS_DEVELOPING;
     private static final int FADE_IN_TIME = 200;
 
     private ImageCache mImageCache;
@@ -158,7 +159,7 @@ public abstract class ImageWorker {
         final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
         if (bitmapWorkerTask != null) {
             bitmapWorkerTask.cancel(true);
-            if (DEBUG) {
+            if (IS_DEVELOPING) {
                 final Object bitmapData = bitmapWorkerTask.data;
                 Log.d(TAG, "cancelWork - cancelled work for " + bitmapData);
             }
@@ -178,7 +179,7 @@ public abstract class ImageWorker {
             final Object bitmapData = bitmapWorkerTask.data;
             if (bitmapData == null || !bitmapData.equals(data)) {
                 bitmapWorkerTask.cancel(true);
-                if (DEBUG) {
+                if (IS_DEVELOPING) {
                     Log.d(TAG, "cancelPotentialWork - cancelled work for " + data);
                 }
             } else {
@@ -221,7 +222,7 @@ public abstract class ImageWorker {
          */
         @Override
         protected Bitmap doInBackground(Object... params) {
-            if (DEBUG) {
+            if (IS_DEVELOPING) {
                 Log.d(TAG, "doInBackground - starting work");
             }
 
@@ -264,7 +265,7 @@ public abstract class ImageWorker {
                 mImageCache.addBitmapToCache(dataString, bitmap);
             }
 
-            if (DEBUG) {
+            if (IS_DEVELOPING) {
                 Log.d(TAG, "doInBackground - finished work");
             }
 
@@ -283,7 +284,7 @@ public abstract class ImageWorker {
 
             final ImageView imageView = getAttachedImageView();
             if (bitmap != null && imageView != null) {
-                if (DEBUG) {
+                if (IS_DEVELOPING) {
                     Log.d(TAG, "onPostExecute - setting bitmap");
                 }
                 setImageBitmap(imageView, bitmap);

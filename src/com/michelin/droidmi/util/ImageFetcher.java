@@ -33,14 +33,15 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
 
-import com.michelin.droidmi.DroidmiSettings;
+import com.michelin.droidmi.data.Constants;
+
 
 /**
  * A simple subclass of {@link ImageResizer} that fetches and resizes images fetched from a URL.
  */
 public class ImageFetcher extends ImageResizer {
     private static final String TAG = "ImageFetcher";
-    private static final boolean DEBUG = DroidmiSettings.DEBUG;
+    private static final boolean IS_DEVELOPING = Constants.IS_DEVELOPING;
     private static final int HTTP_CACHE_SIZE = 10 * 1024 * 1024; // 10MB
     private static final String HTTP_CACHE_DIR = "http";
     private static final int IO_BUFFER_SIZE = 8 * 1024;
@@ -93,7 +94,7 @@ public class ImageFetcher extends ImageResizer {
             if (ImageCache.getUsableSpace(mHttpCacheDir) > HTTP_CACHE_SIZE) {
                 try {
                     mHttpDiskCache = DiskLruCache.open(mHttpCacheDir, 1, 1, HTTP_CACHE_SIZE);
-                    if (DEBUG) {
+                    if (IS_DEVELOPING) {
                         Log.d(TAG, "HTTP cache initialized");
                     }
                 } catch (IOException e) {
@@ -112,7 +113,7 @@ public class ImageFetcher extends ImageResizer {
             if (mHttpDiskCache != null && !mHttpDiskCache.isClosed()) {
                 try {
                     mHttpDiskCache.delete();
-                    if (DEBUG) {
+                    if (IS_DEVELOPING) {
                         Log.d(TAG, "HTTP cache cleared");
                     }
                 } catch (IOException e) {
@@ -132,7 +133,7 @@ public class ImageFetcher extends ImageResizer {
             if (mHttpDiskCache != null) {
                 try {
                     mHttpDiskCache.flush();
-                    if (DEBUG) {
+                    if (IS_DEVELOPING) {
                         Log.d(TAG, "HTTP cache flushed");
                     }
                 } catch (IOException e) {
@@ -151,7 +152,7 @@ public class ImageFetcher extends ImageResizer {
                     if (!mHttpDiskCache.isClosed()) {
                         mHttpDiskCache.close();
                         mHttpDiskCache = null;
-                        if (DEBUG) {
+                        if (IS_DEVELOPING) {
                             Log.d(TAG, "HTTP cache closed");
                         }
                     }
@@ -186,7 +187,7 @@ public class ImageFetcher extends ImageResizer {
      * @return The downloaded and resized bitmap
      */
     private Bitmap processBitmap(String data) {
-        if (DEBUG) {
+        if (IS_DEVELOPING) {
             Log.d(TAG, "processBitmap - " + data);
         }
 
@@ -206,7 +207,7 @@ public class ImageFetcher extends ImageResizer {
                 try {
                     snapshot = mHttpDiskCache.get(key);
                     if (snapshot == null) {
-                        if (DEBUG) {
+                        if (IS_DEVELOPING) {
                             Log.d(TAG, "processBitmap, not found in http cache, downloading...");
                         }
                         DiskLruCache.Editor editor = mHttpDiskCache.edit(key);

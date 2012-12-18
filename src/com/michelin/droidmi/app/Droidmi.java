@@ -1,27 +1,19 @@
-package com.michelin.droidmi;
+package com.michelin.droidmi.app;
 
-import android.app.Application;
+import java.io.File;
+
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.util.Log;
 
-import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.michelin.droid.Droid;
+import com.michelin.droid.app.DroidApplicationBase;
+import com.michelin.droid.util.EvtLog;
 import com.michelin.droid.util.IconUtils;
-import com.michelin.droidmi.util.JavaLoggingHandler;
+import com.michelin.droidmi.data.Constants;
 
-public class Droidmi extends Application {
-    private static final String TAG = "Droidmi";
-    private static final boolean DEBUG = DroidmiSettings.DEBUG;
-    static {
-        Logger.getLogger("com.michelin.droid").addHandler(new JavaLoggingHandler());
-        Logger.getLogger("com.michelin.droid").setLevel(Level.ALL);
-    }
+public class Droidmi extends DroidApplicationBase {
+	public static final String TAG = Droidmi.class.getSimpleName();
 
     public static final String PACKAGE_NAME = "com.michelin.droidmi";
 
@@ -34,10 +26,11 @@ public class Droidmi extends Application {
 
     @Override
     public void onCreate() {
-        Log.i(TAG, "Using Debug Server:\t" + DroidmiSettings.USE_DEBUG_SERVER);
-        Log.i(TAG, "Using Dumpcatcher:\t" + DroidmiSettings.USE_DUMPCATCHER);
-        Log.i(TAG, "Using Debug Log:\t" + DEBUG);
-
+    	super.onCreate();
+        EvtLog.i(Droidmi.class, TAG, "Using Debug Server:\t" + Constants.USE_DEBUG_SERVER);
+        EvtLog.i(Droidmi.class, TAG, "Using Dumpcatcher:\t" + Constants.USE_DUMPCATCHER);
+        EvtLog.i(Droidmi.class, TAG, "Using Debug Log:\t" + IS_DEVELOPING);
+        
         mVersion = getVersionString(this);
         
         // Check if this is a new install by seeing if our preference file exists on disk.
@@ -68,11 +61,7 @@ public class Droidmi extends Application {
     private void loadDroid() {
         // Try logging in and setting up foursquare oauth, then user
         // credentials.
-        if (DroidmiSettings.USE_DEBUG_SERVER) {
-            mDroid = new Droid(Droid.createHttpApi("10.0.2.2:8080", mVersion, false));
-        } else {
-            mDroid = new Droid(Droid.createHttpApi(mVersion, false));
-        }
+		mDroid = new Droid(Droid.createHttpApi(mVersion, false));
     }
 
     /**
@@ -85,11 +74,7 @@ public class Droidmi extends Application {
      */
     public static Droid createDroid(Context context) {
         String version = getVersionString(context);
-        if (DroidmiSettings.USE_DEBUG_SERVER) {
-            return new Droid(Droid.createHttpApi("10.0.2.2:8080", version, false));
-        } else {
-            return new Droid(Droid.createHttpApi(version, false));
-        }
+		return new Droid(Droid.createHttpApi(version, false));
     }
 
     /**
@@ -105,7 +90,7 @@ public class Droidmi extends Application {
             PackageInfo pi = pm.getPackageInfo(PACKAGE_NAME, 0);
             return PACKAGE_NAME + ":" + String.valueOf(pi.versionCode);
         } catch (NameNotFoundException e) {
-            if (DEBUG) Log.d(TAG, "Could not retrieve package info", e);
+            EvtLog.e(e, TAG, "Could not retrieve package info");
             throw new RuntimeException(e);
         }
     }

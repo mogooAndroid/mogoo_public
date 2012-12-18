@@ -4,29 +4,29 @@
 
 package com.michelin.droidmi.util;
 
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
-
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import org.apache.http.client.HttpResponseException;
 
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
 import com.michelin.droid.error.DroidCredentialsException;
 import com.michelin.droid.error.DroidException;
-import com.michelin.droidmi.DroidmiSettings;
+import com.michelin.droidmi.data.Constants;
 
 /**
  * @author Joe LaPenna (joe@joelapenna.com)
  */
 public class NotificationsUtil {
     private static final String TAG = "NotificationsUtil";
-    private static final boolean DEBUG = DroidmiSettings.DEBUG;
+    private static final boolean IS_DEVELOPING = Constants.IS_DEVELOPING;
 
     public static void ToastReasonForFailure(Context context, Throwable e) {
-        if (DEBUG) Log.d(TAG, "Toasting for exception: ", e);
+        if (IS_DEVELOPING) Log.d(TAG, "Toasting for exception: ", e);
 
         if (e == null) {
             Toast.makeText(context, "A surprising new problem has occured. Try again!",

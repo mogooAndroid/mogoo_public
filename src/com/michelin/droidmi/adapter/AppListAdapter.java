@@ -7,8 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.michelin.droid.types.Apk;
+import com.michelin.droid.adapter.BaseArrayAdapter;
 import com.michelin.droidmi.R;
+import com.michelin.droidmi.types.Apk;
 import com.tsz.afinal.FinalBitmap;
 
 public class AppListAdapter extends BaseArrayAdapter<Apk> {

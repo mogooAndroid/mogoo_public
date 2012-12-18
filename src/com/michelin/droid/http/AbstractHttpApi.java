@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -30,18 +28,17 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import com.michelin.droid.Droid;
 import com.michelin.droid.error.DroidCredentialsException;
 import com.michelin.droid.error.DroidException;
 import com.michelin.droid.error.DroidParseException;
 import com.michelin.droid.parsers.AbstractParser;
 import com.michelin.droid.parsers.Parser;
 import com.michelin.droid.types.DroidType;
+import com.michelin.droid.util.EvtLog;
 
 abstract public class AbstractHttpApi implements HttpApi {
-    protected static final Logger LOG = Logger.getLogger(AbstractHttpApi.class.getCanonicalName());
-    protected static final boolean DEBUG = Droid.DEBUG;
-
+	public static final String TAG = AbstractHttpApi.class.getSimpleName();
+	
     private static final String DEFAULT_CLIENT_VERSION = "com.michelin.droid";
     private static final String CLIENT_VERSION_HEADER = "User-Agent";
     private static final int TIMEOUT = 10;
@@ -61,12 +58,12 @@ abstract public class AbstractHttpApi implements HttpApi {
     public DroidType executeHttpRequest(HttpRequestBase httpRequest,
             Parser<? extends DroidType> parser) throws DroidCredentialsException,
             DroidParseException, DroidException, IOException {
-        if (DEBUG) LOG.log(Level.FINE, "doHttpRequest: " + httpRequest.getURI());
-
+        EvtLog.i(AbstractHttpApi.class, TAG, "doHttpRequest: " + httpRequest.getURI());
+        
         HttpResponse response = executeHttpRequest(httpRequest);
-        if (DEBUG) LOG.log(Level.FINE, "executed HttpRequest for: "
-                + httpRequest.getURI().toString());
-
+		EvtLog.i(AbstractHttpApi.class, TAG, "executed HttpRequest for: "
+				+ httpRequest.getURI().toString());
+        
         int statusCode = response.getStatusLine().getStatusCode();
         switch (statusCode) {
             case 200:
@@ -79,7 +76,7 @@ abstract public class AbstractHttpApi implements HttpApi {
 
             case 401:
                 response.getEntity().consumeContent();
-                if (DEBUG) LOG.log(Level.FINE, "HTTP Code: 401");
+                EvtLog.i(AbstractHttpApi.class, TAG, "HTTP Code: 401");
                 throw new DroidCredentialsException(response.getStatusLine().toString());
 
             case 404:
@@ -88,12 +85,13 @@ abstract public class AbstractHttpApi implements HttpApi {
 
             case 500:
                 response.getEntity().consumeContent();
-                if (DEBUG) LOG.log(Level.FINE, "HTTP Code: 500");
+                EvtLog.i(AbstractHttpApi.class, TAG, "HTTP Code: 500");
                 throw new DroidException("Droid is down. Try again later.");
 
             default:
-                if (DEBUG) LOG.log(Level.FINE, "Default case for status code reached: "
-                        + response.getStatusLine().toString());
+				EvtLog.i(AbstractHttpApi.class, TAG,
+						"Default case for status code reached: "
+								+ response.getStatusLine().toString());
                 response.getEntity().consumeContent();
                 throw new DroidException("Error connecting to Droid: " + statusCode + ". Try again later.");
         }
@@ -102,12 +100,12 @@ abstract public class AbstractHttpApi implements HttpApi {
     public String doHttpPost(String url, NameValuePair... nameValuePairs)
             throws DroidCredentialsException, DroidParseException, DroidException,
             IOException {
-        if (DEBUG) LOG.log(Level.FINE, "doHttpPost: " + url);
+        EvtLog.i(AbstractHttpApi.class, TAG, "doHttpPost: " + url);
         HttpPost httpPost = createHttpPost(url, nameValuePairs);
 
         HttpResponse response = executeHttpRequest(httpPost);
-        if (DEBUG) LOG.log(Level.FINE, "executed HttpRequest for: " + httpPost.getURI().toString());
-
+        EvtLog.i(AbstractHttpApi.class, TAG, "executed HttpRequest for: " + httpPost.getURI().toString());
+        
         switch (response.getStatusLine().getStatusCode()) {
             case 200:
                 try {
@@ -138,8 +136,8 @@ abstract public class AbstractHttpApi implements HttpApi {
      * @throws IOException
      */
     public HttpResponse executeHttpRequest(HttpRequestBase httpRequest) throws IOException {
-        if (DEBUG) LOG.log(Level.FINE, "executing HttpRequest for: "
-                + httpRequest.getURI().toString());
+		EvtLog.i(AbstractHttpApi.class, TAG, "executing HttpRequest for: "
+				+ httpRequest.getURI().toString());
         try {
             mHttpClient.getConnectionManager().closeExpiredConnections();
             return mHttpClient.execute(httpRequest);
@@ -150,16 +148,16 @@ abstract public class AbstractHttpApi implements HttpApi {
     }
 
     public HttpGet createHttpGet(String url, NameValuePair... nameValuePairs) {
-        if (DEBUG) LOG.log(Level.FINE, "creating HttpGet for: " + url);
+		EvtLog.i(AbstractHttpApi.class, TAG, "creating HttpGet for: " + url);
         String query = URLEncodedUtils.format(stripNulls(nameValuePairs), HTTP.UTF_8);
         HttpGet httpGet = new HttpGet(url + "?" + query);
         httpGet.addHeader(CLIENT_VERSION_HEADER, mClientVersion);
-        if (DEBUG) LOG.log(Level.FINE, "Created: " + httpGet.getURI());
+        EvtLog.i(AbstractHttpApi.class, TAG, "Created: " + httpGet.getURI());
         return httpGet;
     }
 
     public HttpPost createHttpPost(String url, NameValuePair... nameValuePairs) {
-        if (DEBUG) LOG.log(Level.FINE, "creating HttpPost for: " + url);
+        EvtLog.i(AbstractHttpApi.class, TAG, "creating HttpPost for: " + url);
         HttpPost httpPost = new HttpPost(url);
         httpPost.addHeader(CLIENT_VERSION_HEADER, mClientVersion);
         try {
@@ -167,7 +165,7 @@ abstract public class AbstractHttpApi implements HttpApi {
         } catch (UnsupportedEncodingException e1) {
             throw new IllegalArgumentException("Unable to encode http parameters.");
         }
-        if (DEBUG) LOG.log(Level.FINE, "Created: " + httpPost);
+        EvtLog.i(AbstractHttpApi.class, TAG, "Created: " + httpPost);
         return httpPost;
     }
 
@@ -176,7 +174,7 @@ abstract public class AbstractHttpApi implements HttpApi {
         for (int i = 0; i < nameValuePairs.length; i++) {
             NameValuePair param = nameValuePairs[i];
             if (param.getValue() != null) {
-                if (DEBUG) LOG.log(Level.FINE, "Param: " + param);
+                EvtLog.i(AbstractHttpApi.class, TAG, "Param: " + param);
                 params.add(param);
             }
         }

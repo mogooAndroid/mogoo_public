@@ -1,4 +1,6 @@
-package com.michelin.droid.types;
+package com.michelin.droidmi.types;
+
+import com.michelin.droid.types.DroidType;
 
 public class Credentials implements DroidType {
 

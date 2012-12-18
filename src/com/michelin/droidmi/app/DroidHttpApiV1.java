@@ -1,8 +1,6 @@
-package com.michelin.droid;
+package com.michelin.droidmi.app;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -21,22 +19,20 @@ import com.michelin.droid.http.AbstractHttpApi;
 import com.michelin.droid.http.HttpApi;
 import com.michelin.droid.http.HttpApiWithBasicAuth;
 import com.michelin.droid.http.HttpApiWithOAuth;
-import com.michelin.droid.parsers.CredentialsParser;
 import com.michelin.droid.parsers.GroupParser;
-import com.michelin.droid.parsers.TopicParser;
-import com.michelin.droid.types.Credentials;
 import com.michelin.droid.types.Group;
-import com.michelin.droid.types.Topic;
+import com.michelin.droid.util.EvtLog;
+import com.michelin.droidmi.parsers.CredentialsParser;
+import com.michelin.droidmi.parsers.TopicParser;
+import com.michelin.droidmi.types.Credentials;
+import com.michelin.droidmi.types.Topic;
 
 class DroidHttpApiV1 {
-    private static final Logger LOG = Logger
-            .getLogger(DroidHttpApiV1.class.getCanonicalName());
-    private static final boolean DEBUG = Droid.DEBUG;
+	public static final String TAG = DroidHttpApiV1.class.getSimpleName();
 
     private static final String URL_API_AUTHEXCHANGE = "/authexchange";
-    
-    private static final String URL_API_TOPIC = "/Store/gettopic.do";
     private static final String URL_API_RECOMMEND = "/Store/recommend.do";
+    private static final String URL_API_TOPIC = "/Store/gettopic.do";
     
     private final DefaultHttpClient mHttpClient = AbstractHttpApi.createHttpClient();
     private HttpApi mHttpApi;
@@ -47,7 +43,7 @@ class DroidHttpApiV1 {
     private AsyncHttpClient mAsyncHttpClient;
 
     public DroidHttpApiV1(String domain, String clientVersion, boolean useOAuth) {
-        mApiBaseUrl = "http://" + domain;
+        mApiBaseUrl = domain;
         mAuthScope = new AuthScope(domain, 80);
 
         if (useOAuth) {
@@ -60,10 +56,10 @@ class DroidHttpApiV1 {
 
     void setCredentials(String phone, String password) {
         if (phone == null || phone.length() == 0 || password == null || password.length() == 0) {
-            if (DEBUG) LOG.log(Level.FINE, "Clearing Credentials");
+            EvtLog.i(DroidHttpApiV1.class, TAG, "Clearing Credentials");
             mHttpClient.getCredentialsProvider().clear();
         } else {
-            if (DEBUG) LOG.log(Level.FINE, "Setting Phone/Password: " + phone + "/******");
+            EvtLog.i(DroidHttpApiV1.class, TAG, "Setting Phone/Password: " + phone + "/******");
             mHttpClient.getCredentialsProvider().setCredentials(mAuthScope,
                     new UsernamePasswordCredentials(phone, password));
         }
@@ -74,16 +70,14 @@ class DroidHttpApiV1 {
     }
 
     public void setOAuthConsumerCredentials(String oAuthConsumerKey, String oAuthConsumerSecret) {
-        if (DEBUG) {
-            LOG.log(Level.FINE, "Setting consumer key/secret: " + oAuthConsumerKey + " "
-                    + oAuthConsumerSecret);
-        }
+		EvtLog.i(DroidHttpApiV1.class, TAG, "Setting consumer key/secret: "
+				+ oAuthConsumerKey + " " + oAuthConsumerSecret);
         ((HttpApiWithOAuth) mHttpApi).setOAuthConsumerCredentials(oAuthConsumerKey,
                 oAuthConsumerSecret);
     }
 
     public void setOAuthTokenWithSecret(String token, String secret) {
-        if (DEBUG) LOG.log(Level.FINE, "Setting oauth token/secret: " + token + " " + secret);
+		EvtLog.i(DroidHttpApiV1.class, TAG, "Setting oauth token/secret: " + token + " " + secret);
         ((HttpApiWithOAuth) mHttpApi).setOAuthTokenWithSecret(token, secret);
     }
 
@@ -139,6 +133,8 @@ class DroidHttpApiV1 {
 		params.put("aid", "store@motone.net");
 		params.put("page", page);
 		params.put("pageSize", pageSize);
+		EvtLog.i(Droidmi.class, TAG, "topic request url is: " 
+				+ AsyncHttpClient.getUrlWithQueryString(fullUrl(URL_API_TOPIC), params));
 		mAsyncHttpClient.get(fullUrl(URL_API_TOPIC), params, responseHandler);
 	}
     
@@ -154,6 +150,8 @@ class DroidHttpApiV1 {
 		params.put("aid", "store@motone.net");
 		params.put("page", page);
 		params.put("pageSize", pageSize);
+		EvtLog.i(Droidmi.class, TAG, "recommend app request url is: " 
+				+ AsyncHttpClient.getUrlWithQueryString(fullUrl(URL_API_RECOMMEND), params));
 		mAsyncHttpClient.get(fullUrl(URL_API_RECOMMEND), params, responseHandler);
 	}
 	
@@ -161,3 +159,4 @@ class DroidHttpApiV1 {
         return mApiBaseUrl + url;
     }
 }
+

@@ -1,14 +1,12 @@
-package com.michelin.droidmi.adapter;
+package com.michelin.droid.adapter;
 
-import java.util.List;
+import android.content.Context;
+import android.widget.ArrayAdapter;
 
 import com.michelin.droid.types.DroidType;
 import com.michelin.droid.types.Group;
 import com.michelin.droidmi.data.Constants;
 import com.michelin.droidmi.widget.IPageOperator;
-
-import android.content.Context;
-import android.widget.ArrayAdapter;
 
 public abstract class BaseArrayAdapter<T extends DroidType> extends
 		ArrayAdapter<T> implements IPageOperator {
