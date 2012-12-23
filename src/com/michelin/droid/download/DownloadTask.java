@@ -5,6 +5,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.michelin.droid.download.net.NetChoose;
+
 public class DownloadTask {
 	String mUrlStr = null;
 	String mPath;
@@ -19,7 +21,7 @@ public class DownloadTask {
 				mLoadSize = getCurrentSize();
 				if (mLoadSize == 0 || mLoadSize != mTotalSize) {
 					String str = new StringBuilder("bytes=").append("-").toString();
-					
+					httpUrlConnection = NetChoose.getAvailableNetwork(DownloadMgr.mCtx, url);
 				}
 
 			} catch (MalformedURLException e) {

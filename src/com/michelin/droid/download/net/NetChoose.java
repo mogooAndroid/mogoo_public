@@ -4,6 +4,8 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
 
+import com.michelin.droid.util.TelephoneUtil;
+
 import android.content.Context;
 import android.net.Proxy;
 import android.util.Log;
@@ -17,7 +19,6 @@ public class NetChoose {
 	public static HttpURLConnection getAvailableNetwork(Context context, URL url) {
 		HttpURLConnection httpurlconnection;
 		java.net.Proxy proxy = null;
-		HttpURLConnection httpurlconnection1;
 		try {
 			if (!TelephoneUtil.isWifiEnable(context)) {
 				String s = Proxy.getDefaultHost();
@@ -26,15 +27,14 @@ public class NetChoose {
 								new InetSocketAddress(s, Proxy.getDefaultPort()));
 			}
 			if (proxy == null)
-				httpurlconnection1 = (HttpURLConnection) url.openConnection();
+				httpurlconnection = (HttpURLConnection) url.openConnection();
 			else
-				httpurlconnection1 = (HttpURLConnection) url.openConnection(proxy);
+				httpurlconnection = (HttpURLConnection) url.openConnection(proxy);
 		} catch (Exception exception) {
 			Log.e("Exception", exception.getMessage());
 			exception.printStackTrace();
 			httpurlconnection = null;
 		}
-		httpurlconnection = httpurlconnection1;
 
 		return httpurlconnection;
 	}
