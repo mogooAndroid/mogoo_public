@@ -1,6 +1,7 @@
 package com.michelin.droid.download;
 
 import com.michelin.droid.data.SystemConst;
+import com.michelin.droid.util.FileUtil;
 
 public class ResourceUtility {
 	private static final String TAG = "ResourceUtility";
@@ -14,6 +15,41 @@ public class ResourceUtility {
 	public static String img = ".img";
 	public static String tmp = ".tmp";
 	public static String unfinished = ".unfinished";
+
+	/**
+	 * 获取下载文件的完整路径
+	 * @author lcq 2012-12-25
+	 * @param downloadTask
+	 * @param downStr
+	 * @return
+	 */
+	public static String getPath(DownloadTask downloadTask, String downStr)
+	  {
+	    String path = getFileDir(downloadTask.resType, null);
+	    String name = getFileName(downloadTask.name, downloadTask.versionName, downloadTask.resourceId);
+	    String fullPath = getExtname(downStr);
+	    fullPath = path + name + fullPath;
+	    FileUtil.createFile(fullPath);
+	    return fullPath;
+	  }
+
+	/**
+	 * 用给的后缀名，获取下载文件的完整路径
+	 * @author lcq 2012-12-25
+	 * @param downloadTask
+	 * @param downStr 
+	 * @param extName 后缀名字
+	 * @return
+	 */
+	public static String getPath(DownloadTask downloadTask, String downStr, String extName)
+	  {
+	    String path = getFileDir(downloadTask.resType, null);
+	    String name = getFileName(downloadTask.name, downloadTask.versionName, downloadTask.resourceId);
+	    String fullPath = extName;
+	    fullPath = path + name + fullPath;
+	    FileUtil.createFile(fullPath);
+	    return fullPath;
+	  }
 
 	/**
 	 * 返回下载路径
@@ -56,8 +92,7 @@ public class ResourceUtility {
 	 * @param resId apk的id
 	 * @return
 	 */
-	public static String getFileName(String resName, String verName,
-			String resId) {
+	public static String getFileName(String resName, String verName, String resId) {
 		StringBuffer localStrBuffer = new StringBuffer();
 		if ((resName != null) && (!resName.trim().equals(""))) {
 			localStrBuffer.append(resName);
@@ -73,8 +108,20 @@ public class ResourceUtility {
 				str = "";
 			localStrBuffer.append(str);
 		}
-		return localStrBuffer.toString().replaceAll("/", "")
-				.replaceAll("<", "").replaceAll(">", "").replaceAll(":", "")
-				.replaceAll("\"", "").replaceAll("\\?", "");
+		return localStrBuffer.toString().replaceAll("/", "").replaceAll("<", "").replaceAll(">", "")
+				.replaceAll(":", "").replaceAll("\"", "").replaceAll("\\?", "");
+	}
+
+	/**
+	 * 获取后缀文字
+	 * 
+	 * @author lcq 2012-12-24
+	 * @param urlStr
+	 * @return
+	 */
+	public static String getExtname(String urlStr) {
+		if (urlStr.contains("?"))
+			urlStr = urlStr.substring(0, urlStr.indexOf("?"));
+		return urlStr.substring(urlStr.lastIndexOf("."));
 	}
 }

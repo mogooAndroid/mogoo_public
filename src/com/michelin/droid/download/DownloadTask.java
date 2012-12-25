@@ -6,37 +6,47 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.dragon.android.pandaspace.download.DownloadMgr;
+import com.dragon.android.pandaspace.download.ResourceUtility;
+import com.dragon.android.pandaspace.download.TaskProvider;
 import com.michelin.droid.download.net.NetChoose;
 
 public class DownloadTask {
-	String mUrlStr = null;
-	String mPath;
-	long mLoadSize;
-	long mTotalSize;
-	String mPath = "";
+	String urlStr = null;
+	String path = "";
+	String name;
+	long loadSize;
+	long totalSize;
+	int percent;
+	String versionCode;
+	String versionName;
+	String resourceId;
+	int resType;
 
 	boolean download(int i) {
 		HttpURLConnection httpUrlConnection = null;
-		if (mUrlStr != null) {
+		if (urlStr != null) {
 			try {
-				URL url = new URL(mUrlStr);
-				mLoadSize = getCurrentSize();
-				if (mLoadSize == 0 || mLoadSize != mTotalSize) {
+				URL url = new URL(urlStr);
+				loadSize = getCurrentSize();
+				if (loadSize == 0 || loadSize != totalSize) {
 					String str = new StringBuilder("bytes=").append("-").toString();
 					httpUrlConnection = NetChoose.getAvailableNetwork(DownloadMgr.mCtx, url);
 					httpUrlConnection.setConnectTimeout(20000);
 					httpUrlConnection.setReadTimeout(20000);
-					if(mLoadSize > 0) {
+					if(loadSize > 0) {
 						httpUrlConnection.setRequestProperty("Range", str);
 					}
 					httpUrlConnection.connect();
 					String contentType = httpUrlConnection.getContentType();
-					if(mLoadSize <= 0) {
+					if(loadSize <= 0) {
 						if(isContentTypeSatisfy(contentType)) {
 							int length = httpUrlConnection.getContentLength();
 							if(length > 0){
-								if(mLoadSize == 0) {
-									mTotalSize = length;
+								if(loadSize == 0) {
+									totalSize = length;
+									path = new StringBuilder(ResourceUtility.getPath(this, urlStr)).append(ResourceUtility.tmp).toString();
+									//TaskProvider.updateTaskSizeAndPath(DownloadMgr.mCtx, this);
 									
 								}
 							} else {
@@ -65,7 +75,7 @@ public class DownloadTask {
 	 * @return
 	 */
 	long getCurrentSize() {
-		File file = new File(this.mPath);
+		File file = new File(this.path);
 		long length = 0L;
 		if (file.exists()) {
 			length = file.length();
