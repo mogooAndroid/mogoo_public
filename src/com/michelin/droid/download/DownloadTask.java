@@ -6,12 +6,15 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import android.util.Log;
+
 import com.dragon.android.pandaspace.download.DownloadMgr;
 import com.dragon.android.pandaspace.download.ResourceUtility;
 import com.dragon.android.pandaspace.download.TaskProvider;
 import com.michelin.droid.download.net.NetChoose;
 
 public class DownloadTask {
+	String tag = "DownloadTask";
 	String urlStr = null;
 	String path = "";
 	String name;
@@ -47,7 +50,12 @@ public class DownloadTask {
 									totalSize = length;
 									path = new StringBuilder(ResourceUtility.getPath(this, urlStr)).append(ResourceUtility.tmp).toString();
 									//TaskProvider.updateTaskSizeAndPath(DownloadMgr.mCtx, this);
+								}
+								if (totalSize == loadSize + length) {
 									
+								} else {
+									Log.e(tag, (new StringBuilder("total.size !=(loadSize + fileSize) ,bean.size:")).
+											append(totalSize).append(",loadSize:").append(loadSize).append(",fileSize:").append(length).toString());
 								}
 							} else {
 								return false;
