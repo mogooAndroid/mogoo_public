@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import android.util.Log;
-
 import com.michelin.droid.download.net.NetChoose;
 
 public class DownloadTask {

@@ -1,6 +1,5 @@
 package com.michelin.droid.parsers;
 
-
 import org.xmlpull.v1.XmlPullParser;
 
 import com.michelin.droid.error.DroidError;

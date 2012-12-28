@@ -33,6 +33,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
 
+import com.michelin.droid.util.NotificationsUtil;
 import com.michelin.droidmi.data.Constants;
 
 

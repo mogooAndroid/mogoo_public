@@ -14,7 +14,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import com.michelin.droid.app.DroidApplicationBase;
+import com.michelin.droid.data.ConstantSet;
 import com.michelin.droid.error.DroidError;
 import com.michelin.droid.error.DroidParseException;
 import com.michelin.droid.types.DroidType;
@@ -22,7 +22,7 @@ import com.michelin.droid.util.EvtLog;
 
 public abstract class AbstractParser<T extends DroidType> implements Parser<T> {
 	public static final String TAG = AbstractParser.class.getSimpleName();
-	private static final boolean IS_DEVELOPING = DroidApplicationBase.IS_DEVELOPING;
+	private static final boolean IS_DEVELOPING = ConstantSet.IS_DEVELOPING;
 	
     private static XmlPullParserFactory sFactory;
     static {

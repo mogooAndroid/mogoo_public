@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
 import com.michelin.droid.app.DroidApplicationBase;
+import com.michelin.droid.data.ConstantSet;
 import com.michelin.droid.util.EvtLog;
 import com.michelin.droid.util.IconUtils;
 import com.michelin.droidmi.data.Constants;
@@ -29,7 +30,7 @@ public class Droidmi extends DroidApplicationBase {
     	super.onCreate();
         EvtLog.i(Droidmi.class, TAG, "Using Debug Server:\t" + Constants.USE_DEBUG_SERVER);
         EvtLog.i(Droidmi.class, TAG, "Using Dumpcatcher:\t" + Constants.USE_DUMPCATCHER);
-        EvtLog.i(Droidmi.class, TAG, "Using Debug Log:\t" + IS_DEVELOPING);
+        EvtLog.i(Droidmi.class, TAG, "Using Debug Log:\t" + ConstantSet.IS_DEVELOPING);
         
         mVersion = getVersionString(this);
         

@@ -4,9 +4,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.widget.ResourceCursorAdapter;
 
+import com.michelin.droid.data.ConstantSet;
 import com.michelin.droid.types.DroidType;
-import com.michelin.droidmi.data.Constants;
-import com.michelin.droidmi.widget.IPageOperator;
+import com.michelin.droid.widget.IPageOperator;
 
 public abstract class BaseResourceCursorAdapter<T extends DroidType> extends
 		ResourceCursorAdapter implements IPageOperator {
@@ -18,7 +18,7 @@ public abstract class BaseResourceCursorAdapter<T extends DroidType> extends
 
 	@Override
 	public int getPageSize() {
-		return Constants.PAGE_SIZE;
+		return ConstantSet.PAGE_SIZE;
 	}
 
 	@Override

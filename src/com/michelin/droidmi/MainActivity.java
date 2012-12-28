@@ -8,6 +8,7 @@ import com.loopj.android.http.XmlHttpResponseHandler;
 import com.michelin.droid.parsers.GroupParser;
 import com.michelin.droid.types.DroidType;
 import com.michelin.droid.types.Group;
+import com.michelin.droid.util.NotificationsUtil;
 import com.michelin.droidmi.adapter.AppListAdapter;
 import com.michelin.droidmi.app.Droid;
 import com.michelin.droidmi.app.Droidmi;
@@ -15,7 +16,6 @@ import com.michelin.droidmi.parsers.ApkParser;
 import com.michelin.droidmi.parsers.TopicParser;
 import com.michelin.droidmi.types.Apk;
 import com.michelin.droidmi.types.Topic;
-import com.michelin.droidmi.util.NotificationsUtil;
 import com.michelin.droidmi.widget.AutoRefreshListView;
 import com.tsz.afinal.FinalBitmap;
 
@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.main_activity);
         init();
         ensureUi();
         // requestTopices();
