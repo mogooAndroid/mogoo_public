@@ -16,7 +16,6 @@ import com.michelin.droidmi.parsers.ApkParser;
 import com.michelin.droidmi.parsers.TopicParser;
 import com.michelin.droidmi.types.Apk;
 import com.michelin.droidmi.types.Topic;
-import com.michelin.droidmi.util.Utils;
 import com.michelin.droidmi.widget.AutoRefreshListView;
 import com.tsz.afinal.FinalBitmap;
 
@@ -29,10 +28,9 @@ public class MainActivity extends Activity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.main_activity);
         init();
         ensureUi();
-        Utils.hasFroyo();
         // requestTopices();
         // asyncRequestTopices();
        
