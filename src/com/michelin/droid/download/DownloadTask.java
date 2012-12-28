@@ -2,15 +2,17 @@ package com.michelin.droid.download;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import android.util.Log;
 
-import com.dragon.android.pandaspace.download.DownloadMgr;
-import com.dragon.android.pandaspace.download.ResourceUtility;
-import com.dragon.android.pandaspace.download.TaskProvider;
 import com.michelin.droid.download.net.NetChoose;
 
 public class DownloadTask {
@@ -25,6 +27,7 @@ public class DownloadTask {
 	String versionName;
 	String resourceId;
 	int resType;
+	String headerMsg = "";
 
 	boolean download(int i) {
 		HttpURLConnection httpUrlConnection = null;
@@ -52,6 +55,14 @@ public class DownloadTask {
 									//TaskProvider.updateTaskSizeAndPath(DownloadMgr.mCtx, this);
 								}
 								if (totalSize == loadSize + length) {
+									InputStream inputstream;
+									inputstream = httpUrlConnection.getInputStream();
+									setHeaderMsg(httpUrlConnection);
+									byte abyte0[];
+									RandomAccessFile randomaccessfile;
+									abyte0 = new byte[4096];
+									randomaccessfile = new RandomAccessFile(path, "rw");
+									randomaccessfile.seek(loadSize);
 									
 								} else {
 									Log.e(tag, (new StringBuilder("total.size !=(loadSize + fileSize) ,bean.size:")).
@@ -100,4 +111,30 @@ public class DownloadTask {
 			flag = false;
 		return flag;
 	}
+
+	public void setHeaderMsg(HttpURLConnection httpURLConnection)
+	  {
+	    if (httpURLConnection != null)
+	    {
+	      StringBuffer localStringBuffer = new StringBuffer();
+	      Iterator localIterator1 = httpURLConnection.getHeaderFields().entrySet().iterator();
+	      while (localIterator1.hasNext())
+	      {
+	        Object entry = (Map.Entry)localIterator1.next();
+	        String str = (String)((Map.Entry)entry).getKey();
+	        Object entryValue = (List)((Map.Entry)entry).getValue();
+	        entry = new StringBuffer();
+	        Iterator valueList = ((List)entryValue).iterator();
+	        while (valueList.hasNext())
+	        {
+	          entryValue = (String)valueList.next();
+	          ((StringBuffer)entry).append(str + ":" + (String)entryValue);
+	          ((StringBuffer)entry).append("  ");
+	        }
+	        localStringBuffer.append((StringBuffer)entry);
+	        localStringBuffer.append("\t\n");
+	      }
+	      this.headerMsg = localStringBuffer.toString();
+	    }
+	  }
 }
