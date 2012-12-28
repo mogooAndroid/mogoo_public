@@ -3,10 +3,10 @@ package com.michelin.droid.adapter;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
+import com.michelin.droid.data.ConstantSet;
 import com.michelin.droid.types.DroidType;
 import com.michelin.droid.types.Group;
-import com.michelin.droidmi.data.Constants;
-import com.michelin.droidmi.widget.IPageOperator;
+import com.michelin.droid.widget.IPageOperator;
 
 public abstract class BaseArrayAdapter<T extends DroidType> extends
 		ArrayAdapter<T> implements IPageOperator {
@@ -48,7 +48,7 @@ public abstract class BaseArrayAdapter<T extends DroidType> extends
 
 	@Override
 	public int getPageSize() {
-		return Constants.PAGE_SIZE;
+		return ConstantSet.PAGE_SIZE;
 	}
 
 	@Override

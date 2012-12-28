@@ -1,9 +1,10 @@
 package com.michelin.droid.app;
 
-import com.michelin.droid.util.PackageUtil;
-
 import android.app.Application;
 import android.content.Context;
+
+import com.michelin.droid.util.CrashHandler;
+import com.michelin.droid.util.FileUtil;
 
 /**
  * 全局应用程序
@@ -13,12 +14,12 @@ import android.content.Context;
  */
 public class DroidApplicationBase extends Application {
 	public static Context CONTEXT;
-	public static boolean IS_DEVELOPING = false;
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		CONTEXT = getApplicationContext();
-		IS_DEVELOPING = PackageUtil.getConfigBoolean("is_developing");
+		CrashHandler crashHandler = CrashHandler.getInstance();
+		crashHandler.init(CONTEXT);
 	}
 }

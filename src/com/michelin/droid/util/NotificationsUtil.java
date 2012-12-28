@@ -2,7 +2,7 @@
  * Copyright 2009 Joe LaPenna
  */
 
-package com.michelin.droidmi.util;
+package com.michelin.droid.util;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -16,14 +16,14 @@ import android.widget.Toast;
 
 import com.michelin.droid.error.DroidCredentialsException;
 import com.michelin.droid.error.DroidException;
-import com.michelin.droidmi.data.Constants;
+import com.michelin.droid.data.ConstantSet;
 
 /**
  * @author Joe LaPenna (joe@joelapenna.com)
  */
 public class NotificationsUtil {
     private static final String TAG = "NotificationsUtil";
-    private static final boolean IS_DEVELOPING = Constants.IS_DEVELOPING;
+    private static final boolean IS_DEVELOPING = ConstantSet.IS_DEVELOPING;
 
     public static void ToastReasonForFailure(Context context, Throwable e) {
         if (IS_DEVELOPING) Log.d(TAG, "Toasting for exception: ", e);
