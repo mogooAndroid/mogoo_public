@@ -405,7 +405,7 @@ public class FileUtil {
 	
 	/**
 	 * 
-	 * @author Q.d
+	 * @author
 	 * 
 	 */
 	public interface OnDownloadingListener {
