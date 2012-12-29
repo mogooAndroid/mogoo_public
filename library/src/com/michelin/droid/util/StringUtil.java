@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 /**
  * 
- * @author qiu.d
+ * @author
  * 
  */
 public class StringUtil {

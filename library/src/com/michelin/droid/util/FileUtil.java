@@ -22,7 +22,7 @@ import android.os.Environment;
 /**
  * 文件帮助类
  * 
- * @author wang.xy
+ * @author
  * 
  */
 public class FileUtil {
