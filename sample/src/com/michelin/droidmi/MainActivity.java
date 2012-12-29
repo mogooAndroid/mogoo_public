@@ -33,7 +33,6 @@ public class MainActivity extends Activity {
         ensureUi();
         // requestTopices();
         // asyncRequestTopices();
-       
     }
     
 	private void init() {
