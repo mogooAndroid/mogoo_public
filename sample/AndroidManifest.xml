@@ -29,12 +29,14 @@
         <meta-data
             android:name="api_root_url"
             android:value="http://www.imogoo.cn/MAS/" />
+        <!-- 该ip是运行 playdroidmi.py 服务的机器ip -->
+        <!-- android模拟器debug_server地址是 http://10.0.2.2:8080/-->
         <meta-data
             android:name="debug_root_url"
-            android:value="http://10.0.2.2:8080/" />        
+            android:value="http://192.168.1.100:8080/" />        
 		<meta-data
             android:name="use_debug_server"
-            android:value="false" />
+            android:value="true" />
         
         <activity
             android:name=".MainActivity"
