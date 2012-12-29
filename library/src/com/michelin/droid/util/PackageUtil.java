@@ -226,4 +226,19 @@ public class PackageUtil {
 		}
 		return false;
 	}
+	
+	/**
+	 * 动态获取资源id
+	 * 
+	 * @param context
+	 * 			activity界面或者application
+	 * @param name
+	 * 			资源名
+	 * @param defType
+	 * 			资源所属的类 drawable, id, string, layout等
+	 * @return 资源id
+	 */
+	public static int getIdentifier(Context context, String name, String defType) {
+		return context.getResources().getIdentifier(name, defType, context.getPackageName());
+	}
 }

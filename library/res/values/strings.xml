@@ -1,0 +1,7 @@
+<resources>
+	<add-resource type="string" name="lib_app_name" />
+    <string name="lib_app_name">DroidLibrary</string>
+    <!-- 退出提示 -->
+    <add-resource type="string" name="lib_exit_prompt" />
+    <string name="lib_exit_prompt">程序未知错误，重启一下..</string>
+</resources>

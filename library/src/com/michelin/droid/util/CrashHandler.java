@@ -27,8 +27,6 @@ import android.os.Environment;
 import android.os.Looper;
 import android.widget.Toast;
 
-import com.michelin.droidmi.R;
-
 /**
  * 异常信息处理类，这里会处理未捕捉的异常
  * 
@@ -134,7 +132,8 @@ public class CrashHandler implements UncaughtExceptionHandler {
 			@Override
 			public void run() {
 				Looper.prepare();
-				Toast.makeText(mContext, mContext.getResources().getString(R.string.exit_prompt), Toast.LENGTH_LONG)
+				int resId = PackageUtil.getIdentifier(mContext, "lib_exit_prompt", "string");
+				Toast.makeText(mContext, resId, Toast.LENGTH_LONG)
 						.show();
 				Looper.loop();
 			}
