@@ -219,7 +219,7 @@ public class PackageUtil {
 		List<RunningAppProcessInfo> mRunningApp = mManager.getRunningAppProcesses();
 		int size = mRunningApp.size();
 		for (int i = 0; i < size; i++) {
-			if ("com.pdw.pmh".equals(mRunningApp.get(i).processName)) {
+			if (context.getPackageName().equals(mRunningApp.get(i).processName)) {
 				EvtLog.d(TAG, "接收闹钟   找到进程");
 				return true;
 			}
