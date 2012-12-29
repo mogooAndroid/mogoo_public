@@ -33,7 +33,7 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
   def handle_url(self, url):
     path = None
 
-    if '/Store/recommend.do' in url.path:
+    if url.path == '/recommend.do' :
       path = '../captures/api/Store/recommend.xml'
 
     if path is None:
