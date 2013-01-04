@@ -10,23 +10,31 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import android.os.Message;
 import android.util.Log;
+
 import com.michelin.droid.download.net.NetChoose;
 
 public class DownloadTask {
 	String tag = "DownloadTask";
+	static final int TIME_OUT = 20000;
 	String urlStr = null;
 	String path = "";
 	String name;
 	long loadSize;
 	long totalSize;
 	int percent;
+	int state = 0;
 	String versionCode;
 	String versionName;
 	String resourceId;
 	int resType;
 	String headerMsg = "";
+	boolean downloadFlag;
+	Map<Object, DownloadTaskListener> listenerMap = new ConcurrentHashMap();
+	static long lastSendTime = System.currentTimeMillis();
 
 	boolean download(int i) {
 		HttpURLConnection httpUrlConnection = null;
@@ -57,11 +65,26 @@ public class DownloadTask {
 									InputStream inputstream;
 									inputstream = httpUrlConnection.getInputStream();
 									setHeaderMsg(httpUrlConnection);
-									byte abyte0[];
+									byte[] buffer;
 									RandomAccessFile randomaccessfile;
-									abyte0 = new byte[4096];
+									buffer = new byte[4096];
 									randomaccessfile = new RandomAccessFile(path, "rw");
 									randomaccessfile.seek(loadSize);
+									
+									if (downloadFlag) {
+										int k;
+										if ((k = inputstream.read(buffer, 0, 4096)) <= 0) /*goto _L15; else goto _L19*/{
+											inputstream.close();
+											randomaccessfile.close();
+											httpUrlConnection.disconnect();
+										} else {
+											randomaccessfile.write(buffer, 0 , k);
+											loadSize = loadSize + (long)k;
+											int i1 = caculatePercent();
+											if (i1 != percent)
+												setPercent(i1);
+										}
+									}
 									
 								} else {
 									Log.e(tag, (new StringBuilder("total.size !=(loadSize + fileSize) ,bean.size:")).
@@ -136,4 +159,58 @@ public class DownloadTask {
 	      this.headerMsg = localStringBuffer.toString();
 	    }
 	  }
+
+	public boolean isDownloading() {
+		return this.downloadFlag;
+	}
+
+	/**
+	 * 计算进度
+	 * @author lcq 2013-1-4
+	 * @return
+	 */
+	int caculatePercent() {
+		int i = 0;
+		if (totalSize != 0L && loadSize != 0L)
+			i = Long.valueOf((100L * loadSize) / totalSize).intValue();
+		return i;
+	}
+
+	public void setPercent(int i) {
+		percent = i;
+		fireProgressChangeEvent();
+	}
+
+	/**
+	 * 每500ms通知进度更改了，防止更新太频繁
+	 * @author lcq 2013-1-4
+	 */
+	void fireProgressChangeEvent() {
+		long current = System.currentTimeMillis();
+		if ((current - lastSendTime > 500L) || (this.percent == 100)) {
+			lastSendTime = current;
+			sendMsg(1);
+		}
+	}
+
+	/**
+	 * 通知观察者进度改变了
+	 * @author lcq 2013-1-4
+	 * @param paramInt
+	 */
+	void sendMsg(int paramInt) {
+		Iterator localIterator = this.listenerMap.entrySet().iterator();
+		while (localIterator.hasNext()) {
+			Object localObject = (Map.Entry) localIterator.next();
+			((Map.Entry) localObject).getKey();
+			DownloadTaskListener localDownloadTaskListener = (DownloadTaskListener) ((Map.Entry) localObject)
+					.getValue();
+			if (localDownloadTaskListener != null) {
+				localObject = Message.obtain();
+				((Message) localObject).what = paramInt;
+				localDownloadTaskListener.sendMessage((Message) localObject);
+			}
+
+		}
+	}
 }

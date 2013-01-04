@@ -247,9 +247,8 @@ public class StringUtil {
 	/**
 	 * 重载方法，获取当期是星期几
 	 * 
-	 * @param c
-	 *            日历
-	 * @return 星期*
+	 * @param c 日历
+	 * @return 星期
 	 */
 	public static String getDayOfWeek(Calendar c) {
 		return getDayOfWeek(c.get(Calendar.DAY_OF_WEEK));
