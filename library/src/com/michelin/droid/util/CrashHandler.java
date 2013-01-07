@@ -163,7 +163,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 			return false;
 		}
 
-		return Boolean.valueOf(PackageUtil.getConfigBoolean("debug_log_enable"));
+		return true;
 	}
 
 	/**
