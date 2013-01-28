@@ -15,8 +15,8 @@
  */
 package com.tsz.afinal;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -27,13 +27,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
+import com.tsz.afinal.bitmap.core.AsyncTask;
 import com.tsz.afinal.bitmap.core.BitmapCache;
 import com.tsz.afinal.bitmap.core.BitmapCommonUtils;
 import com.tsz.afinal.bitmap.core.BitmapDisplayConfig;
@@ -47,24 +45,177 @@ public class FinalBitmap {
 	
 
 	private FinalBitmapConfig mConfig;
-	private BitmapCache mImageCache;
+	private static BitmapCache mImageCache;
 
 	private boolean mExitTasksEarly = false;
 	private boolean mPauseWork = false;
 	private final Object mPauseWorkLock = new Object();
 	private Context mContext;
 	
-	private ExecutorService bitmapLoadAndDisplayExecutor;
+	private static ExecutorService bitmapLoadAndDisplayExecutor;
 
+	private static FinalBitmap mFinalBitmap;
 	////////////////////////// config method start////////////////////////////////////
-	public FinalBitmap(Context context) {
+	private FinalBitmap(Context context) {
 		mContext = context;
 		mConfig = new FinalBitmapConfig(context);
 		
-		configDiskCachePath(BitmapCommonUtils.getDiskCacheDir(context, "afinalCache"));//配置缓存路径
+		configDiskCachePath(BitmapCommonUtils.getDiskCacheDir(context, "afinalCache").getAbsolutePath());//配置缓存路径
 		configDisplayer(new SimpleDisplayer());//配置显示器
 		configDownlader(new SimpleHttpDownloader());//配置下载器
 	}
+	
+	/**
+	 * 创建finalbitmap
+	 * @param ctx
+	 * @return
+	 */
+	public static FinalBitmap create(Context ctx){
+		if(mFinalBitmap == null){
+			mFinalBitmap = new FinalBitmap(ctx.getApplicationContext());
+			mFinalBitmap.init();
+		}
+		return mFinalBitmap;
+	}
+	
+	/**
+	 * 创建finalBitmap
+	 * @param ctx
+	 * @param diskCachePath 磁盘缓存路径
+	 * @return
+	 */
+	public static FinalBitmap create(Context ctx,String diskCachePath){
+		if(mFinalBitmap == null){
+			mFinalBitmap = new FinalBitmap(ctx.getApplicationContext());
+			mFinalBitmap.configDiskCachePath(diskCachePath);
+			mFinalBitmap.init();
+		}
+		return mFinalBitmap;
+			
+	}
+	
+	
+	/**
+	 * 创建finalBitmap
+	 * @param ctx
+	 * @param diskCachePath 磁盘缓存路径
+	 * @param memoryCacheSizePercent 缓存大小在当前进程的百分比（0.05-0.8之间）
+	 * @return
+	 */
+	public static FinalBitmap create(Context ctx,String diskCachePath,float memoryCacheSizePercent){
+		if(mFinalBitmap == null){
+			mFinalBitmap = new FinalBitmap(ctx.getApplicationContext());
+			mFinalBitmap.configDiskCachePath(diskCachePath);
+			mFinalBitmap.configMemoryCachePercent(memoryCacheSizePercent);
+			mFinalBitmap.init();
+		}
+		
+		return mFinalBitmap;
+	}
+
+	/**
+	 * 创建finalBitmap
+	 * @param ctx
+	 * @param diskCachePath 磁盘缓存路径
+	 * @param memoryCacheSize 内存缓存大小
+	 * @return
+	 */
+	public static FinalBitmap create(Context ctx,String diskCachePath,int memoryCacheSize){
+		if(mFinalBitmap == null){
+			mFinalBitmap = new FinalBitmap(ctx.getApplicationContext());
+			mFinalBitmap.configDiskCachePath(diskCachePath);
+			mFinalBitmap.configMemoryCacheSize(memoryCacheSize);
+			mFinalBitmap.init();
+		}
+			
+		return mFinalBitmap;
+	}
+	
+	
+	/**
+	 * 创建finalBitmap
+	 * @param ctx
+	 * @param diskCachePath 磁盘缓存路径
+	 * @param memoryCacheSizePercent 缓存大小在当前进程的百分比（0.05-0.8之间）
+	 * @param threadSize 线程并发数量
+	 * @return
+	 */
+	public static FinalBitmap create(Context ctx,String diskCachePath,float memoryCacheSizePercent,int threadSize){
+		if(mFinalBitmap == null){
+			mFinalBitmap = new FinalBitmap(ctx.getApplicationContext());
+			mFinalBitmap.configDiskCachePath(diskCachePath);
+			mFinalBitmap.configBitmapLoadThreadSize(threadSize);
+			mFinalBitmap.configMemoryCachePercent(memoryCacheSizePercent);
+			mFinalBitmap.init();
+		}
+		
+		return mFinalBitmap;
+	}
+
+	/**
+	 * 创建finalBitmap
+	 * @param ctx
+	 * @param diskCachePath 磁盘缓存路径
+	 * @param memoryCacheSize 内存缓存大小
+	 * @param threadSize 线程并发数量
+	 * @return
+	 */
+	public static FinalBitmap create(Context ctx,String diskCachePath,int memoryCacheSize,int threadSize){
+		if(mFinalBitmap == null){
+			mFinalBitmap = new FinalBitmap(ctx.getApplicationContext());
+			mFinalBitmap.configDiskCachePath(diskCachePath);
+			mFinalBitmap.configBitmapLoadThreadSize(threadSize);
+			mFinalBitmap.configMemoryCacheSize(memoryCacheSize);
+			mFinalBitmap.init();
+		}
+			
+		return mFinalBitmap;
+	}
+	
+	/**
+	 * 创建finalBitmap
+	 * @param ctx
+	 * @param diskCachePath 磁盘缓存路径
+	 * @param memoryCacheSizePercent 缓存大小在当前进程的百分比（0.05-0.8之间）
+	 * @param diskCacheSize 磁盘缓存大小
+	 * @param threadSize 线程并发数量
+	 * @return
+	 */
+	public static FinalBitmap create(Context ctx,String diskCachePath,float memoryCacheSizePercent,int diskCacheSize,int threadSize){
+		if(mFinalBitmap == null){
+			mFinalBitmap = new FinalBitmap(ctx.getApplicationContext());
+			mFinalBitmap.configDiskCachePath(diskCachePath);
+			mFinalBitmap.configBitmapLoadThreadSize(threadSize);
+			mFinalBitmap.configMemoryCachePercent(memoryCacheSizePercent);
+			mFinalBitmap.configDiskCacheSize(diskCacheSize);
+			mFinalBitmap.init();
+		}
+		
+		return mFinalBitmap;
+	}
+
+	/**
+	 * 创建finalBitmap
+	 * @param ctx
+	 * @param diskCachePath 磁盘缓存路径
+	 * @param memoryCacheSize 内存缓存大小
+	 * @param diskCacheSize 磁盘缓存大小
+	 * @param threadSize 线程并发数量
+	 * @return
+	 */
+	public static FinalBitmap create(Context ctx,String diskCachePath,int memoryCacheSize,int diskCacheSize,int threadSize){
+		if(mFinalBitmap == null){
+			mFinalBitmap = new FinalBitmap(ctx.getApplicationContext());
+			mFinalBitmap.configDiskCachePath(diskCachePath);
+			mFinalBitmap.configBitmapLoadThreadSize(threadSize);
+			mFinalBitmap.configMemoryCacheSize(memoryCacheSize);
+			mFinalBitmap.configDiskCacheSize(diskCacheSize);
+			mFinalBitmap.init();
+		}
+			
+		return mFinalBitmap;
+	}
+	
 	
 	/**
 	 * 设置图片正在加载的时候显示的图片
@@ -102,28 +253,6 @@ public class FinalBitmap {
 		return this;
 	}
 	
-	/**
-	 * 配置磁盘缓存路径
-	 * @param strPath
-	 * @return
-	 */
-	public FinalBitmap configDiskCachePath(String strPath){
-		if(!TextUtils.isEmpty(strPath)){
-			mConfig.cachePath = strPath;
-		}
-		return this;
-	}
-	
-	/**
-	 * 配置磁盘缓存路径
-	 * @param strPath
-	 * @return
-	 */
-	public FinalBitmap configDiskCachePath(File pathFile){
-		if(pathFile!=null)
-			configDiskCachePath(pathFile.getAbsolutePath());
-		return this;
-	}
 	
 	/**
 	 * 配置默认图片的小的高度
@@ -164,10 +293,32 @@ public class FinalBitmap {
 	}
 	
 	/**
+	 * 配置 加载图片的时候是否计算图片大小，如果配置为真，则decode图片的时候可能会造成out of memory的异常
+	 * @param neverCalculate 是否decode的时候不计算图片大小
+	 */
+	public FinalBitmap configCalculateBitmapSizeWhenDecode(boolean neverCalculate){
+		if (mConfig != null && mConfig.bitmapProcess != null) 
+			mConfig.bitmapProcess.configCalculateBitmap(neverCalculate);
+		return this;
+	} 
+	
+	/**
+	 * 配置磁盘缓存路径
+	 * @param strPath
+	 * @return
+	 */
+	private FinalBitmap configDiskCachePath(String strPath){
+		if(!TextUtils.isEmpty(strPath)){
+			mConfig.cachePath = strPath;
+		}
+		return this;
+	}
+
+	/**
 	 * 配置内存缓存大小 大于2MB以上有效
 	 * @param size 缓存大小
 	 */
-	public FinalBitmap configMemoryCacheSize(int size){
+	private FinalBitmap configMemoryCacheSize(int size){
 		mConfig.memCacheSize = size;
 		return this;
 	}
@@ -176,7 +327,7 @@ public class FinalBitmap {
 	 * 设置应缓存的在APK总内存的百分比，优先级大于configMemoryCacheSize
 	 * @param percent 百分比，值的范围是在 0.05 到 0.8之间
 	 */
-	public FinalBitmap configMemoryCachePercent(float percent){
+	private FinalBitmap configMemoryCachePercent(float percent){
 		mConfig.memCacheSizePercent = percent;
 		return this;
 	}
@@ -185,32 +336,28 @@ public class FinalBitmap {
 	 * 设置磁盘缓存大小 5MB 以上有效
 	 * @param size
 	 */
-	public FinalBitmap configDiskCacheSize(int size){
+	private FinalBitmap configDiskCacheSize(int size){
 		mConfig.diskCacheSize = size;
 		return this;
 	} 
 	
-	/**
-	 * 配置原始图片缓存大小（非压缩缓存）
-	 * @param size
-	 */
-	public FinalBitmap configOriginalDiskCacheSize(int size){
-		mConfig.diskCacheSize = size;
-		return this;
-	}
+	
 	
 	/**
 	 * 设置加载图片的线程并发数量
 	 * @param size
 	 */
-	public FinalBitmap configBitmapLoadThreadSize(int size){
+	private FinalBitmap configBitmapLoadThreadSize(int size){
 		if(size >= 1)
 			mConfig.poolSize = size;
 		return this;
 	}
 	
-	
-	public FinalBitmap init(){
+	/**
+	 * 这个方法必须被调用后 FinalBitmap 配置才能有效
+	 * @return
+	 */
+	private FinalBitmap init(){
 		
 		mConfig.init();
 		
@@ -252,35 +399,51 @@ public class FinalBitmap {
 	
 
 	public void display(ImageView imageView,String uri,int imageWidth,int imageHeight){
-		BitmapDisplayConfig displayConfig = getDisplayConfig();
-		displayConfig.setBitmapHeight(imageHeight);
-		displayConfig.setBitmapWidth(imageWidth);
+		BitmapDisplayConfig displayConfig = configMap.get(imageWidth+"_"+imageHeight);
+		if(displayConfig==null){
+			displayConfig = getDisplayConfig();
+			displayConfig.setBitmapHeight(imageHeight);
+			displayConfig.setBitmapWidth(imageWidth);
+			configMap.put(imageWidth+"_"+imageHeight, displayConfig);
+		}
 		
 		doDisplay(imageView,uri,displayConfig);
 	}
 	
 	public void display(ImageView imageView,String uri,Bitmap loadingBitmap){
-		BitmapDisplayConfig displayConfig = getDisplayConfig();
-		displayConfig.setLoadingBitmap(loadingBitmap);
+		BitmapDisplayConfig displayConfig = configMap.get(String.valueOf(loadingBitmap));
+		if(displayConfig==null){
+			displayConfig = getDisplayConfig();
+			displayConfig.setLoadingBitmap(loadingBitmap);
+			configMap.put(String.valueOf(loadingBitmap), displayConfig);
+		}
 		
 		doDisplay(imageView,uri,displayConfig);
 	}
 	
 	
 	public void display(ImageView imageView,String uri,Bitmap loadingBitmap,Bitmap laodfailBitmap){
-		BitmapDisplayConfig displayConfig = getDisplayConfig();
-		displayConfig.setLoadingBitmap(loadingBitmap);
-		displayConfig.setLoadfailBitmap(laodfailBitmap);
+		BitmapDisplayConfig displayConfig = configMap.get(String.valueOf(loadingBitmap)+"_"+String.valueOf(laodfailBitmap));
+		if(displayConfig==null){
+			displayConfig = getDisplayConfig();
+			displayConfig.setLoadingBitmap(loadingBitmap);
+			displayConfig.setLoadfailBitmap(laodfailBitmap);
+			configMap.put(String.valueOf(loadingBitmap)+"_"+String.valueOf(laodfailBitmap), displayConfig);
+		}
 		
 		doDisplay(imageView,uri,displayConfig);
 	}
 	
 	public void display(ImageView imageView,String uri,int imageWidth,int imageHeight,Bitmap loadingBitmap,Bitmap laodfailBitmap){
-		BitmapDisplayConfig displayConfig = getDisplayConfig();
-		displayConfig.setBitmapHeight(imageHeight);
-		displayConfig.setBitmapWidth(imageWidth);
-		displayConfig.setLoadingBitmap(loadingBitmap);
-		displayConfig.setLoadfailBitmap(laodfailBitmap);
+		BitmapDisplayConfig displayConfig = configMap.get(imageWidth+"_"+imageHeight+"_"+String.valueOf(loadingBitmap)+"_"+String.valueOf(laodfailBitmap));
+		if(displayConfig==null){
+			displayConfig = getDisplayConfig();
+			displayConfig.setBitmapHeight(imageHeight);
+			displayConfig.setBitmapWidth(imageWidth);
+			displayConfig.setLoadingBitmap(loadingBitmap);
+			displayConfig.setLoadfailBitmap(laodfailBitmap);
+			configMap.put(imageWidth+"_"+imageHeight+"_"+String.valueOf(loadingBitmap)+"_"+String.valueOf(laodfailBitmap), displayConfig);
+		}
 		
 		doDisplay(imageView,uri,displayConfig);
 	}
@@ -309,15 +472,17 @@ public class FinalBitmap {
 			imageView.setImageBitmap(bitmap);
 			
 		}else if (checkImageTask(uri, imageView)) {
-			final BitmapLoadAndDisplayTask task = new BitmapLoadAndDisplayTask(imageView,uri,displayConfig);
+			
+			final BitmapLoadAndDisplayTask task = new BitmapLoadAndDisplayTask(imageView, displayConfig);
 			//设置默认图片
 			final AsyncDrawable asyncDrawable = new AsyncDrawable(mContext.getResources(), displayConfig.getLoadingBitmap(), task);
 	        imageView.setImageDrawable(asyncDrawable);
-	
-	        bitmapLoadAndDisplayExecutor.submit(task);
+	        
+	        task.executeOnExecutor(bitmapLoadAndDisplayExecutor, uri);
 	    }
 	}
 	
+	private HashMap<String, BitmapDisplayConfig> configMap= new HashMap<String, BitmapDisplayConfig>();
 	
 	private BitmapDisplayConfig getDisplayConfig(){
 		BitmapDisplayConfig config = new BitmapDisplayConfig();
@@ -329,6 +494,8 @@ public class FinalBitmap {
 		config.setLoadingBitmap(mConfig.defaultDisplayConfig.getLoadingBitmap());
 		return config;
 	}
+	
+	
 
 
 	private void initDiskCacheInternal() {
@@ -346,6 +513,13 @@ public class FinalBitmap {
 		}
 		if (mConfig != null && mConfig.bitmapProcess != null) {
 			mConfig.bitmapProcess.clearCacheInternal();
+		}
+	}
+	
+	
+	private void clearMemoryCache(){
+		if (mImageCache != null) {
+			mImageCache.clearMemoryCache();
 		}
 	}
 
@@ -379,12 +553,45 @@ public class FinalBitmap {
 		}
 		return null;
 	}
+	
+	public void setExitTasksEarly(boolean exitTasksEarly) {
+		mExitTasksEarly = exitTasksEarly;
+	}
+	
+	/**
+     * activity onResume的时候调用这个方法，让加载图片线程继续
+     */
+    public void onResume(){
+    	setExitTasksEarly(false);
+    }
+    
+    /**
+     * activity onPause的时候调用这个方法，让线程暂停
+     */
+    public void onPause() {
+        setExitTasksEarly(true);
+        flushCache();
+    }
+    
+    /**
+     * activity onDestroy的时候调用这个方法，释放缓存
+     */
+    public void onDestroy() {
+        closeCache();
+    }
 
 	/**
 	 * 清除缓存
 	 */
-	public void clearCache() {
+	public void clearAllCache() {
 		new CacheExecutecTask().execute(CacheExecutecTask.MESSAGE_CLEAR);
+	}
+	
+	/**
+	 * 清除缓存
+	 */
+	public void clearMemeoryCache() {
+		new CacheExecutecTask().execute(CacheExecutecTask.MESSAGE_CLEAR_MEMORY);
 	}
 
 	/**
@@ -424,35 +631,18 @@ public class FinalBitmap {
 		}
 	}
 
-	 private static class AsyncDrawable extends BitmapDrawable {
-	        private final WeakReference<BitmapLoadAndDisplayTask> bitmapWorkerTaskReference;
-
-	        public AsyncDrawable(Resources res, Bitmap bitmap, BitmapLoadAndDisplayTask bitmapWorkerTask) {
-	            super(res, bitmap);
-	            bitmapWorkerTaskReference = new WeakReference<BitmapLoadAndDisplayTask>(bitmapWorkerTask);
-	        }
-
-	        public BitmapLoadAndDisplayTask getBitmapWorkerTask() {
-	            return bitmapWorkerTaskReference.get();
-	        }
-	  }
-	 
 	    
-	   /**
-	    * 获取imageview中正在执行的任务
-	    * @param imageView
-	    * @return
-	    */
-	    private static BitmapLoadAndDisplayTask getBitmapWorkerTask(ImageView imageView) {
-	        if (imageView != null) {
-	            final Drawable drawable = imageView.getDrawable();
-	            if (drawable instanceof AsyncDrawable) {
-	                final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
-	                return asyncDrawable.getBitmapWorkerTask();
-	            }
-	        }
-	        return null;
-	    }
+	private static BitmapLoadAndDisplayTask getBitmapTaskFromImageView(ImageView imageView) {
+		if (imageView != null) {
+			final Drawable drawable = imageView.getDrawable();
+			if (drawable instanceof AsyncDrawable) {
+				final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
+				return asyncDrawable.getBitmapWorkerTask();
+			}
+		}
+		return null;
+	}
+
 
 	    /**
 	     * 检测 imageView中是否已经有线程在运行
@@ -460,102 +650,36 @@ public class FinalBitmap {
 	     * @param imageView
 	     * @return true 没有 false 有线程在运行了
 	     */
-	    public static boolean checkImageTask(String data, ImageView imageView) {
-	        final BitmapLoadAndDisplayTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-	        if (bitmapWorkerTask != null) {
-	            final String bitmapData = bitmapWorkerTask.uriData;
-	            return bitmapData == null || !bitmapData.equals(data);
-	        }
-	        return true;
-	    }
+	public static boolean checkImageTask(Object data, ImageView imageView) {
+			final BitmapLoadAndDisplayTask bitmapWorkerTask = getBitmapTaskFromImageView(imageView);
 
-	/**
-	 * @title bitmap下载显示的线程
-	 * @description 负责下载（或从sdcard加载）bitmap 并显示在imageview上
-	 * @company 探索者网络工作室(www.tsz.net)
-	 * @author michael Young (www.YangFuhai.com)
-	 * @version 1.0
-	 * @created 2012-10-28
-	 */
-	private class BitmapLoadAndDisplayTask implements Runnable {
-		private final String uriData;
-		private final WeakReference<ImageView> imageViewReference;
-		private final BitmapDisplayConfig bitmapDisplayConfig;
-
-		private Handler mhander = new Handler() {
-			@Override
-			public void handleMessage(Message msg) {
-				switch (msg.what) {
-				case 0://加载成功
-					final Bitmap bm = mImageCache.getBitmapFromMemCache(uriData.toString());
-					final ImageView iv = getAttachedImageView();
-					if (iv != null && bm != null) {
-						mConfig.displayer.loadCompletedisplay(iv, bm,bitmapDisplayConfig);
-					}
-					break;
-				case 1: //加载失败
-					final Bitmap failBitmap = bitmapDisplayConfig.getLoadfailBitmap();
-					final ImageView failIv = getAttachedImageView();
-					if (failIv != null && failBitmap != null) {
-						mConfig.displayer.loadFailDisplay(failIv, failBitmap);
-					}
-					break;
-				default:
-					break;
+			if (bitmapWorkerTask != null) {
+				final Object bitmapData = bitmapWorkerTask.data;
+				if (bitmapData == null || !bitmapData.equals(data)) {
+					bitmapWorkerTask.cancel(true);
+				} else {
+					// 同一个线程已经在执行
+					return false;
 				}
 			}
-		};
-
-		public BitmapLoadAndDisplayTask(ImageView imageView, String uriData,BitmapDisplayConfig displayConfig) {
-			this.imageViewReference = new WeakReference<ImageView>(imageView);
-			this.uriData = uriData;
-			this.bitmapDisplayConfig = displayConfig;
-		}
-
-		@Override
-		public void run() {
-
-			synchronized (mPauseWorkLock) {
-				while (mPauseWork) {
-					try {
-						mPauseWorkLock.wait();
-					} catch (InterruptedException e) {
-					}
-				}
-			}
-
-			Bitmap bitmap = null;
-			
-			if ( mImageCache != null && getAttachedImageView()!=null &&  !mExitTasksEarly) {
-				bitmap = mImageCache.getBitmapFromDiskCache(uriData);
-			}
-			
-			if (bitmap == null && getAttachedImageView()!=null && !mExitTasksEarly) {
-				bitmap = processBitmap(uriData,bitmapDisplayConfig);
-			}
-			
-			if ( bitmap != null && mImageCache != null) {
-				mImageCache.addBitmapToCache(uriData, bitmap);
-				mhander.sendEmptyMessage(0);
-			}else{
-				mhander.sendEmptyMessage(1);
-			}
-			
+			return true;
 		}
 		
-		 private ImageView getAttachedImageView() {
-	            final ImageView imageView = imageViewReference.get();
-	            final BitmapLoadAndDisplayTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
-
-	            if (this == bitmapWorkerTask) {
-	                return imageView;
-	            }
-
-	            return null;
-	        }
 		
-	}
-	
+		private static class AsyncDrawable extends BitmapDrawable {
+			private final WeakReference<BitmapLoadAndDisplayTask> bitmapWorkerTaskReference;
+
+			public AsyncDrawable(Resources res, Bitmap bitmap,BitmapLoadAndDisplayTask bitmapWorkerTask) {
+				super(res, bitmap);
+				bitmapWorkerTaskReference = new WeakReference<BitmapLoadAndDisplayTask>(
+						bitmapWorkerTask);
+			}
+
+			public BitmapLoadAndDisplayTask getBitmapWorkerTask() {
+				return bitmapWorkerTaskReference.get();
+			}
+		}
+
 
 	/**
 	 * @title 缓存操作的异步任务
@@ -570,6 +694,7 @@ public class FinalBitmap {
 		public static final int MESSAGE_INIT_DISK_CACHE = 1;
 		public static final int MESSAGE_FLUSH = 2;
 		public static final int MESSAGE_CLOSE = 3;
+		public static final int MESSAGE_CLEAR_MEMORY = 4;
 		@Override
 		protected Void doInBackground(Object... params) {
 			switch ((Integer) params[0]) {
@@ -580,12 +705,100 @@ public class FinalBitmap {
 				initDiskCacheInternal();
 				break;
 			case MESSAGE_FLUSH:
+				clearMemoryCache();
 				flushCacheInternal();
 				break;
 			case MESSAGE_CLOSE:
+				clearMemoryCache();
 				closeCacheInternal();
 				break;
+			case MESSAGE_CLEAR_MEMORY:
+				clearMemoryCache();
+				break;
 			}
+			return null;
+		}
+	}
+	
+	/**
+	 * bitmap下载显示的线程
+	 * @author michael yang
+	 */
+	private class BitmapLoadAndDisplayTask extends AsyncTask<Object, Void, Bitmap> {
+		private Object data;
+		private final WeakReference<ImageView> imageViewReference;
+		private final BitmapDisplayConfig displayConfig;
+
+		public BitmapLoadAndDisplayTask(ImageView imageView,BitmapDisplayConfig config) {
+			imageViewReference = new WeakReference<ImageView>(imageView);
+			displayConfig = config;
+		}
+
+		@Override
+		protected Bitmap doInBackground(Object... params) {
+			data = params[0];
+			final String dataString = String.valueOf(data);
+			Bitmap bitmap = null;
+
+			synchronized (mPauseWorkLock) {
+				while (mPauseWork && !isCancelled()) {
+					try {
+						mPauseWorkLock.wait();
+					} catch (InterruptedException e) {
+					}
+				}
+			}
+
+			if (mImageCache != null && !isCancelled() && getAttachedImageView() != null && !mExitTasksEarly) {
+				bitmap = mImageCache.getBitmapFromDiskCache(dataString);
+			}
+
+			if (bitmap == null && !isCancelled()&& getAttachedImageView() != null && !mExitTasksEarly) {
+				bitmap = processBitmap(dataString,displayConfig);
+			}
+
+			if (bitmap != null && mImageCache != null) {
+				mImageCache.addBitmapToCache(dataString, bitmap);
+			}
+
+			return bitmap;
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap bitmap) {
+			if (isCancelled() || mExitTasksEarly) {
+				bitmap = null;
+			}
+
+			// 判断线程和当前的imageview是否是匹配
+			final ImageView imageView = getAttachedImageView();
+			if (bitmap != null && imageView != null) {
+				mConfig.displayer.loadCompletedisplay(imageView,bitmap,displayConfig);			
+			}else if(bitmap == null && imageView!=null ){
+				mConfig.displayer.loadFailDisplay(imageView, displayConfig.getLoadfailBitmap());
+			}
+		}
+
+		@Override
+		protected void onCancelled(Bitmap bitmap) {
+			super.onCancelled(bitmap);
+			synchronized (mPauseWorkLock) {
+				mPauseWorkLock.notifyAll();
+			}
+		}
+
+		/**
+		 * 获取线程匹配的imageView,防止出现闪动的现象
+		 * @return
+		 */
+		private ImageView getAttachedImageView() {
+			final ImageView imageView = imageViewReference.get();
+			final BitmapLoadAndDisplayTask bitmapWorkerTask = getBitmapTaskFromImageView(imageView);
+
+			if (this == bitmapWorkerTask) {
+				return imageView;
+			}
+
 			return null;
 		}
 	}
@@ -611,7 +824,7 @@ public class FinalBitmap {
 		 public int memCacheSize;//内存缓存百分比
 		 public int diskCacheSize;//磁盘百分比
 		 public int poolSize = 3;//默认的线程池线程并发数量
-		 public int originalDiskCache = 20 * 1024 * 1024;//20MB
+		 public int originalDiskCacheSize = 30 * 1024 * 1024;//50MB
 		 
 		
 		 public FinalBitmapConfig(Context context) {
@@ -622,7 +835,7 @@ public class FinalBitmap {
 				
 				//设置图片的显示最大尺寸（为屏幕的大小,默认为屏幕宽度的1/3）
 				DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-				int defaultWidth = (int)Math.floor(displayMetrics.widthPixels/3);
+				int defaultWidth = (int)Math.floor(displayMetrics.widthPixels/4);
 				defaultDisplayConfig.setBitmapHeight(defaultWidth);
 				defaultDisplayConfig.setBitmapWidth(defaultWidth);
 				
@@ -635,7 +848,7 @@ public class FinalBitmap {
 			if(displayer==null)
 				displayer = new SimpleDisplayer();
 			
-			bitmapProcess = new BitmapProcess(downloader,cachePath,originalDiskCache);
+			bitmapProcess = new BitmapProcess(downloader,cachePath,originalDiskCacheSize);
 		}
 
 	}

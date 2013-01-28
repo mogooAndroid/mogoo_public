@@ -22,8 +22,8 @@ import java.io.IOException;
 
 import com.tsz.afinal.bitmap.download.Downloader;
 
-
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 public class BitmapProcess {
@@ -38,6 +38,8 @@ public class BitmapProcess {
 
 	private File mOriginalCacheDir;
 	private Downloader downloader;
+	
+	private boolean neverCalculate = false;
 
 	public BitmapProcess(Downloader downloader,String filePath,int cacheSize) {
 		this.mOriginalCacheDir = new File(filePath+"/original");
@@ -45,6 +47,10 @@ public class BitmapProcess {
 		if(cacheSize<=0)
 			cacheSize = DEFAULT_CACHE_SIZE;
 		this.cacheSize = cacheSize;
+	}
+	
+	public void configCalculateBitmap(boolean neverCalculate){
+		this.neverCalculate = neverCalculate;
 	}
 
 	public Bitmap processBitmap(String data, BitmapDisplayConfig config) {
@@ -96,7 +102,10 @@ public class BitmapProcess {
 
 		Bitmap bitmap = null;
 		if (fileDescriptor != null) {
-			bitmap = BitmapDecoder.decodeSampledBitmapFromDescriptor(fileDescriptor, config.getBitmapWidth(),config.getBitmapHeight());
+			if(neverCalculate)
+				bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+			else
+				bitmap = BitmapDecoder.decodeSampledBitmapFromDescriptor(fileDescriptor, config.getBitmapWidth(),config.getBitmapHeight());
 		}
 		if (fileInputStream != null) {
 			try {

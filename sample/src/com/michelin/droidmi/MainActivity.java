@@ -1,8 +1,12 @@
 package com.michelin.droidmi;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 
 import com.loopj.android.http.XmlHttpResponseHandler;
 import com.michelin.droid.parsers.GroupParser;
@@ -36,7 +40,7 @@ public class MainActivity extends Activity {
     }
     
 	private void init() {
-		mFinalBitmap = new FinalBitmap(this).init();
+		mFinalBitmap = FinalBitmap.create(this);
 		mFinalBitmap.configLoadfailImage(R.drawable.ic_launcher);
 	}
 
@@ -57,6 +61,22 @@ public class MainActivity extends Activity {
 			@Override
 			public void onRefresh() {
 				 asyncRequestRecommend(false);
+			}
+		});
+		
+		mListView.setOnScrollListener(new OnScrollListener() {
+			
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                	mFinalBitmap.pauseWork(false);
+                } else {
+                	mFinalBitmap.pauseWork(true);
+                }
+			}
+			
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				
 			}
 		});
 		asyncRequestRecommend(true);

@@ -200,13 +200,7 @@ public class LruMemoryCache<K, V> {
      *     this removal was caused by a {@link #put}. Otherwise it was caused by
      *     an eviction or a {@link #remove}.
      */
-    protected void entryRemoved(boolean evicted, K key, V oldValue, V newValue) {
-    	if(evicted && key instanceof Bitmap){
-			if(!((Bitmap)key).isRecycled()){
-				((Bitmap)key).recycle();
-			}
-    	}
-    }
+    protected void entryRemoved(boolean evicted, K key, V oldValue, V newValue) {}
 
     /**
      * Called after a cache miss to compute a value for the corresponding key.
@@ -315,9 +309,9 @@ public class LruMemoryCache<K, V> {
         return new LinkedHashMap<K, V>(map);
     }
 
-    public synchronized final String toString() {
+	public synchronized final String toString() {
         int accesses = hitCount + missCount;
         int hitPercent = accesses != 0 ? (100 * hitCount / accesses) : 0;
-        return String.format("LruCache[maxSize=%d,hits=%d,misses=%d,hitRate=%d%%]",maxSize, hitCount, missCount, hitPercent);
+        return String.format("LruMemoryCache[maxSize=%d,hits=%d,misses=%d,hitRate=%d%%]",maxSize, hitCount, missCount, hitPercent);
     }
 }
