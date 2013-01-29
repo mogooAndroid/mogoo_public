@@ -1,6 +1,8 @@
 package com.michelin.droidmi.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +19,14 @@ public class AppListAdapter extends BaseArrayAdapter<Apk> {
 	private LayoutInflater mInflater;
 	private int mLayoutToInflate;
 	private FinalBitmap mFinalBitmap;
-	
+	private Bitmap mLoadingBitmap = null;
 	
 	public AppListAdapter(Context context, FinalBitmap finalBitmap) {
 		super(context, -1);
 		mInflater = LayoutInflater.from(context);
 		mLayoutToInflate = R.layout.app_list_item;
+		mLoadingBitmap = BitmapFactory.decodeResource(
+				context.getResources(), R.drawable.ic_launcher);
 		mFinalBitmap = finalBitmap;
 	}
 
@@ -54,7 +58,7 @@ public class AppListAdapter extends BaseArrayAdapter<Apk> {
 		Apk apk = (Apk) getItem(position);
 
 		holder.name.setText(apk.getName());
-		mFinalBitmap.display(holder.img, apk.getIconUrl());
+		mFinalBitmap.display(holder.img, apk.getIconUrl(), mLoadingBitmap);
 		return convertView;
 	}
 

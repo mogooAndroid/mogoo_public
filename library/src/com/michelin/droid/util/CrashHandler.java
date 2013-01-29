@@ -127,6 +127,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
 			return true;
 		}
 
+		// 默认异常打印
+		EvtLog.e(TAG, ex);
+		
 		// 使用Toast来显示异常信息
 		new Thread() {
 			@Override

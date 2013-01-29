@@ -38,7 +38,31 @@ public class MainActivity extends Activity {
         // requestTopices();
         // asyncRequestTopices();
     }
-    
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if(mFinalBitmap != null) {
+			mFinalBitmap.onDestroy();
+		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if(mFinalBitmap != null) {
+			mFinalBitmap.onResume();
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if(mFinalBitmap != null) {
+			mFinalBitmap.onPause();
+		}
+	}
+	
 	private void init() {
 		mFinalBitmap = FinalBitmap.create(this);
 		mFinalBitmap.configLoadfailImage(R.drawable.ic_launcher);
