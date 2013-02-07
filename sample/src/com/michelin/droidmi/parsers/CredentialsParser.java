@@ -12,7 +12,7 @@ import com.michelin.droid.util.EvtLog;
 import com.michelin.droidmi.types.Credentials;
 
 public class CredentialsParser extends AbstractParser<Credentials> {
-	public static final String TAG = CredentialsParser.class.getSimpleName();
+	private static final String TAG = CredentialsParser.class.getSimpleName();
 
     @Override
     public Credentials parseInner(XmlPullParser parser) throws XmlPullParserException, IOException,

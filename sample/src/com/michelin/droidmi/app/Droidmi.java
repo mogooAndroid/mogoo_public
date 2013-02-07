@@ -14,7 +14,7 @@ import com.michelin.droid.util.IconUtils;
 import com.michelin.droidmi.data.Constants;
 
 public class Droidmi extends DroidApplicationBase {
-	public static final String TAG = Droidmi.class.getSimpleName();
+	private static final String TAG = Droidmi.class.getSimpleName();
 
     public static final String PACKAGE_NAME = "com.michelin.droidmi";
 

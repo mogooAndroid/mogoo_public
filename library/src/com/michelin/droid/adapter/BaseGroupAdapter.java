@@ -7,6 +7,7 @@ import com.michelin.droid.types.DroidType;
 import com.michelin.droid.types.Group;
 
 import android.content.Context;
+import android.os.Handler;
 import android.widget.BaseAdapter;
 
 /**
@@ -46,6 +47,12 @@ abstract class BaseGroupAdapter<T extends DroidType> extends BaseAdapter {
 
 	public void setGroup(Group<T> g) {
 		group = g;
-		notifyDataSetInvalidated();
+		mHandler.sendEmptyMessage(0);
 	}
+	
+	private Handler mHandler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			notifyDataSetInvalidated();
+		};
+	};
 }

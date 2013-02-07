@@ -2,7 +2,7 @@ package com.michelin.droidmi.app;
 
 import java.io.IOException;
 
-import com.loopj.android.http.XmlHttpResponseHandler;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.michelin.droid.error.DroidCredentialsException;
 import com.michelin.droid.error.DroidError;
 import com.michelin.droid.error.DroidException;
@@ -14,7 +14,7 @@ import com.michelin.droidmi.types.Credentials;
 import com.michelin.droidmi.types.Topic;
 
 public class Droid {
-	public static final String TAG = Droid.class.getSimpleName();
+	private static final String TAG = Droid.class.getSimpleName();
 
 	private String mPhone;
 	private String mPassword;
@@ -77,16 +77,22 @@ public class Droid {
 
 	@V1
 	public void findTopic(String page, String pageSize,
-			XmlHttpResponseHandler responseHandler) {
+			AsyncHttpResponseHandler responseHandler) {
 		mDroidV1.topicRequests(page, pageSize, responseHandler);
 	}
 
 	@V1
 	public void findRecommend(String page, String pageSize,
-			XmlHttpResponseHandler responseHandler) {
+			AsyncHttpResponseHandler responseHandler) {
 		mDroidV1.recommendRequests(page, pageSize, responseHandler);
 	}
 
+	@V1
+	public void findLazyListData(String url, int page, int pageSize,
+			AsyncHttpResponseHandler responseHandler) {
+		mDroidV1.lazyListDataRequest(url, page, pageSize, responseHandler);
+	}
+	
 	public static final DroidHttpApiV1 createHttpApi(String domain,
 			String clientVersion, boolean useOAuth) {
 		EvtLog.i(Droid.class, TAG, "Using foursquare.com for requests.");

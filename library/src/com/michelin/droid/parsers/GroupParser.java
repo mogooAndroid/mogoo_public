@@ -13,7 +13,7 @@ import com.michelin.droid.util.EvtLog;
 
 @SuppressWarnings("rawtypes")
 public class GroupParser extends AbstractParser<Group> {
-	public static final String TAG = GroupParser.class.getSimpleName();
+	private static final String TAG = GroupParser.class.getSimpleName();
 
     private Parser<? extends DroidType> mSubParser;
 

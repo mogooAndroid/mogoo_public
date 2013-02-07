@@ -35,7 +35,7 @@ import android.widget.Toast;
  */
 public class CrashHandler implements UncaughtExceptionHandler {
 
-	public static final String TAG = CrashHandler.class.getSimpleName();
+	private static final String TAG = CrashHandler.class.getSimpleName();
 	private static final int FOUR = 4;
 	private static final int SLEEP_INTERVAL = 3000;
 	// 错误日志文件目录名

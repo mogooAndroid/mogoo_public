@@ -21,7 +21,7 @@ import com.michelin.droid.types.DroidType;
 import com.michelin.droid.util.EvtLog;
 
 public abstract class AbstractParser<T extends DroidType> implements Parser<T> {
-	public static final String TAG = AbstractParser.class.getSimpleName();
+	private static final String TAG = AbstractParser.class.getSimpleName();
 	private static final boolean IS_DEVELOPING = ConstantSet.IS_DEVELOPING;
 	
     private static XmlPullParserFactory sFactory;

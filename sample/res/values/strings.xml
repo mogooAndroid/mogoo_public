@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <string name="hello">Hello World, MainActivity!</string>
     <string name="app_name">Droidmi</string>
-    <string name="pull_to_refresh_refreshing_label">正在刷新...</string>
-    <string name="no_more_data">已到最后一页</string>
-    <string name="pull_to_refresh_pull_label">下拉可以刷新</string>
-    <string name="pull_to_refresh_release_label">释放开始刷新</string>
-    <string name="pull_to_refresh_header_subtext_label">上次更新：</string>
-    <string name="no_data">未找到匹配结果</string>
     <!-- 退出提示 -->
     <string name="exit_prompt">程序未知错误，重启一下..</string>
-    </resources>
+    <string name="pull_to_refresh_pull_label">下拉可以刷新</string>
+    <string name="pull_to_refresh_refreshing_label">加载中&#8230;</string>
+    <string name="pull_to_refresh_release_label">松开可以刷新</string>
+    <string name="loading_text">嘿哟，嘿哟~ 正在加载&#8230;</string>
+    <string name="loading_failed">加载失败了,点击重新加载</string>
+    <string name="txt_loading">正在加载</string>
+    <string name="common_network_refresh">获取数据失败，请点击刷新</string>
+    <string name="overefresh_update">更新于</string>
+    <string name="loading_list_null">没有搜索到匹配数据！</string>
+</resources>

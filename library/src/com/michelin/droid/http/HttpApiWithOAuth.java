@@ -21,7 +21,7 @@ import com.michelin.droid.types.DroidType;
 import com.michelin.droid.util.EvtLog;
 
 public class HttpApiWithOAuth extends AbstractHttpApi {
-	public static final String TAG = HttpApiWithOAuth.class.getSimpleName();
+	private static final String TAG = HttpApiWithOAuth.class.getSimpleName();
 
     private OAuthConsumer mConsumer;
 

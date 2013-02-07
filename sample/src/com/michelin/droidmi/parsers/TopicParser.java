@@ -12,7 +12,7 @@ import com.michelin.droid.util.EvtLog;
 import com.michelin.droidmi.types.Topic;
 
 public class TopicParser extends AbstractParser<Topic> {
-	public static final String TAG = TopicParser.class.getSimpleName();
+	private static final String TAG = TopicParser.class.getSimpleName();
 
     @Override
     public Topic parseInner(XmlPullParser parser) throws XmlPullParserException, IOException,

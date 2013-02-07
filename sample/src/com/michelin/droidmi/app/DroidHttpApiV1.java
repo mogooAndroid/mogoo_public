@@ -10,8 +10,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.XmlHttpResponseHandler;
 import com.michelin.droid.error.DroidCredentialsException;
 import com.michelin.droid.error.DroidError;
 import com.michelin.droid.error.DroidException;
@@ -27,12 +27,12 @@ import com.michelin.droidmi.parsers.TopicParser;
 import com.michelin.droidmi.types.Credentials;
 import com.michelin.droidmi.types.Topic;
 
-class DroidHttpApiV1 {
-	public static final String TAG = DroidHttpApiV1.class.getSimpleName();
+public class DroidHttpApiV1 {
+	private static final String TAG = DroidHttpApiV1.class.getSimpleName();
 
-    private static final String URL_API_AUTHEXCHANGE = "/authexchange";
-    private static final String URL_API_RECOMMEND = "/Store/recommend.do";
-    private static final String URL_API_TOPIC = "/Store/gettopic.do";
+	public static final String URL_API_AUTHEXCHANGE = "/authexchange";
+	public static final String URL_API_RECOMMEND = "/Store/recommend.do";
+	public static final String URL_API_TOPIC = "/Store/gettopic.do";
     
     private final DefaultHttpClient mHttpClient = AbstractHttpApi.createHttpClient();
     private HttpApi mHttpApi;
@@ -101,7 +101,7 @@ class DroidHttpApiV1 {
     }
     
     /**
-     * http://192.168.0.177:9000/MAS/Store/getTopicAppList.do?akey=5252&uid=dfdf&aid=ddfadaf&page=1&pageSize=20
+     * http://192.168.0.177:9000/MAS/Store/getTopicAppList.do?akey=5252&uid=dfdf&aid=ddfadaf&page=1&pagesize=20
      * @throws IOException 
      * @throws DroidException 
      * @throws DroidError 
@@ -116,23 +116,23 @@ class DroidHttpApiV1 {
                 new BasicNameValuePair("uid", uid), //
                 new BasicNameValuePair("aid", aid), //
                 new BasicNameValuePair("page", page), //
-                new BasicNameValuePair("pageSize", pageSize) //
+                new BasicNameValuePair("pagesize", pageSize) //
                 );
         return (Group<Topic>) mHttpApi.doHttpRequest(httpGet, new GroupParser(new TopicParser()));
     }
     
 	/**
 	 * http://www.imogoo.cn/MAS/Store/gettopic.do?akey=999.999.999.999&uid=
-	 * baf4370ab63a615163438ea5198042ad&aid=store@motone.net&page=1&pageSize=20
+	 * baf4370ab63a615163438ea5198042ad&aid=store@motone.net&page=1&pagesize=20
 	 */
 	public void topicRequests(String page, String pageSize,
-			XmlHttpResponseHandler responseHandler) {
+			AsyncHttpResponseHandler responseHandler) {
 		RequestParams params = new RequestParams();
 		params.put("akey", "999.999.999.999");
 		params.put("uid", "baf4370ab63a615163438ea5198042ad");
 		params.put("aid", "store@motone.net");
 		params.put("page", page);
-		params.put("pageSize", pageSize);
+		params.put("pagesize", pageSize);
 		EvtLog.i(Droidmi.class, TAG, "topic request url is: " 
 				+ AsyncHttpClient.getUrlWithQueryString(fullUrl(URL_API_TOPIC), params));
 		mAsyncHttpClient.get(fullUrl(URL_API_TOPIC), params, responseHandler);
@@ -143,16 +143,40 @@ class DroidHttpApiV1 {
 	 * &akey=c6fcdc393bd872504285426a77bfe0df&aid=store@motone.net&page=1&pagesize=20
 	 */
 	public void recommendRequests(String page, String pageSize,
-			XmlHttpResponseHandler responseHandler) {
+			AsyncHttpResponseHandler responseHandler) {
 		RequestParams params = new RequestParams();
 		params.put("akey", "c6fcdc393bd872504285426a77bfe0df");
 		params.put("uid", "baf4370ab63a615163438ea5198042ad");
 		params.put("aid", "store@motone.net");
 		params.put("page", page);
-		params.put("pageSize", pageSize);
+		params.put("pagesize", pageSize);
 		EvtLog.i(Droidmi.class, TAG, "recommend app request url is: " 
 				+ AsyncHttpClient.getUrlWithQueryString(fullUrl(URL_API_RECOMMEND), params));
 		mAsyncHttpClient.get(fullUrl(URL_API_RECOMMEND), params, responseHandler);
+	}
+	
+	/**
+	 * 懒加载分页数据.
+	 * @param url api地址
+	 * @param page 页数
+	 * @param pageSize 分页大小
+	 * @param responseHandler 加载回调
+	 */
+	public void lazyListDataRequest(String url, int page, int pageSize, AsyncHttpResponseHandler responseHandler) {
+		RequestParams params = getRequestParams(page, pageSize);
+		EvtLog.i(Droidmi.class, TAG, "lazy list request url is: " 
+				+ AsyncHttpClient.getUrlWithQueryString(fullUrl(url), params));
+		mAsyncHttpClient.get(fullUrl(URL_API_RECOMMEND), params, responseHandler);
+	}
+	
+	private RequestParams getRequestParams(int page, int pageSize) {
+		RequestParams params = new RequestParams();
+		params.put("akey", "c6fcdc393bd872504285426a77bfe0df");
+		params.put("uid", "baf4370ab63a615163438ea5198042ad");
+		params.put("aid", "store@motone.net");
+		params.put("page", String.valueOf(page));
+		params.put("pagesize", String.valueOf(pageSize));
+		return params;
 	}
 	
     private String fullUrl(String url) {

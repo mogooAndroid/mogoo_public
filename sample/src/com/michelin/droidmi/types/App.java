@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.michelin.droid.types.DroidType;
 import com.michelin.droid.util.ParcelUtils;
 
-public class Apk implements DroidType, Parcelable {
+public class App implements DroidType, Parcelable {
 
 	private int mId = -1;
     private String mName = "";
@@ -21,21 +21,21 @@ public class Apk implements DroidType, Parcelable {
     private String mApkUrl = "";
     private String mIconUrl = "";
     
-    public Apk() {
+    public App() {
     }
 
-    private Apk(Parcel in) {
+    private App(Parcel in) {
     	mName = ParcelUtils.readStringFromParcel(in);
     }
     
-    public static final Topic.Creator<Apk> CREATOR = new Parcelable.Creator<Apk>() {
-        public Apk createFromParcel(Parcel in) {
-            return new Apk(in);
+    public static final Topic.Creator<App> CREATOR = new Parcelable.Creator<App>() {
+        public App createFromParcel(Parcel in) {
+            return new App(in);
         }
 
         @Override
-        public Apk[] newArray(int size) {
-            return new Apk[size];
+        public App[] newArray(int size) {
+            return new App[size];
         }
     };
 

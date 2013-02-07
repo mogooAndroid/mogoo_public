@@ -37,7 +37,7 @@ import com.michelin.droid.types.DroidType;
 import com.michelin.droid.util.EvtLog;
 
 abstract public class AbstractHttpApi implements HttpApi {
-	public static final String TAG = AbstractHttpApi.class.getSimpleName();
+	private static final String TAG = AbstractHttpApi.class.getSimpleName();
 	
     private static final String DEFAULT_CLIENT_VERSION = "com.michelin.droid";
     private static final String CLIENT_VERSION_HEADER = "User-Agent";

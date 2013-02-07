@@ -9,10 +9,10 @@ import com.michelin.droid.error.DroidError;
 import com.michelin.droid.error.DroidParseException;
 import com.michelin.droid.parsers.AbstractParser;
 import com.michelin.droid.util.EvtLog;
-import com.michelin.droidmi.types.Apk;
+import com.michelin.droidmi.types.App;
 
-public class ApkParser extends AbstractParser<Apk> {
-	public static final String TAG = ApkParser.class.getSimpleName();
+public class AppParser extends AbstractParser<App> {
+	private static final String TAG = AppParser.class.getSimpleName();
     /*    	
 	<rc id='13544'>
 		<n><![CDATA[墨迹天气]]></n>
@@ -29,14 +29,14 @@ public class ApkParser extends AbstractParser<Apk> {
 	</rc>
 	*/
     @Override
-    public Apk parseInner(XmlPullParser parser) throws XmlPullParserException, IOException,
+    public App parseInner(XmlPullParser parser) throws XmlPullParserException, IOException,
             DroidError, DroidParseException {
-		Apk apk = null;
+		App apk = null;
 		int eventType = parser.getEventType();
 		while (eventType == XmlPullParser.START_TAG) {
 			String name = parser.getName();
 			if ("rc".equals(name)) {
-				apk = new Apk();
+				apk = new App();
 				apk.setId(parser.getAttributeValue(0));
 			} else if ("n".equals(name)) {
 				apk.setName(parser.nextText());
@@ -62,7 +62,7 @@ public class ApkParser extends AbstractParser<Apk> {
 				apk.setIconUrl(parser.nextText());
 			} else {
 				// Consume something we don't understand.
-				EvtLog.i(ApkParser.class, TAG,
+				EvtLog.i(AppParser.class, TAG,
 						"Found tag that we don't recognize: " + name);
 				skipSubTree(parser);
 			}
