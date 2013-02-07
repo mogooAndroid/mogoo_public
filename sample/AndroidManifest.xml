@@ -24,9 +24,10 @@
         <meta-data
             android:name="debug_log_enable"
             android:value="true" />
+        <!-- 打印http请求结果开关 -->
         <meta-data
             android:name="is_developing"
-            android:value="true" />
+            android:value="false" />
         <meta-data
             android:name="api_root_url"
             android:value="http://www.imogoo.cn/MAS/" />

@@ -22,7 +22,6 @@ import com.michelin.droid.util.EvtLog;
 
 public abstract class AbstractParser<T extends DroidType> implements Parser<T> {
 	private static final String TAG = AbstractParser.class.getSimpleName();
-	private static final boolean IS_DEVELOPING = ConstantSet.IS_DEVELOPING;
 	
     private static XmlPullParserFactory sFactory;
     static {
@@ -62,7 +61,7 @@ public abstract class AbstractParser<T extends DroidType> implements Parser<T> {
         XmlPullParser parser;
         try {
             parser = sFactory.newPullParser();
-            if (IS_DEVELOPING) {
+            if (ConstantSet.IS_DEVELOPING) {
 				Reader reader = new InputStreamReader(is, "UTF-8");
 				StringBuilder sb = new StringBuilder();
 				// read content

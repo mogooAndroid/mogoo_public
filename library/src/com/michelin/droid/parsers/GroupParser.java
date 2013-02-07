@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.michelin.droid.data.ConstantSet;
 import com.michelin.droid.error.DroidError;
 import com.michelin.droid.error.DroidParseException;
 import com.michelin.droid.types.DroidType;
@@ -31,7 +32,8 @@ public class GroupParser extends AbstractParser<Group> {
         while (parser.nextTag() == XmlPullParser.START_TAG) {
             DroidType item = this.mSubParser.parse(parser);
             if(item != null) {
-            	EvtLog.i(GroupParser.class, TAG, "adding item: " + item);
+            	if (ConstantSet.IS_DEVELOPING)
+            		EvtLog.i(GroupParser.class, TAG, "adding item: " + item);
                 group.add(item);
             }
         }
