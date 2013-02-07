@@ -33,10 +33,23 @@ public class AppLazyListAdapter extends AbsLazyListAdapter {
 	protected void setViewContent(Object viewHolder, Object bean, int i) {
 		App apk = (App) bean;
 		((ViewHolder) viewHolder).name.setText(apk.getName());
+
+	}
+
+	@Override
+	protected void setOnScrollIdleView(Object viewHolder, Object bean,
+			int position) {
+		App apk = (App) bean;
 		mFinalBitmap.display(((ViewHolder) viewHolder).img, apk.getIconUrl(),
 				mLoadingBitmap);
 	}
 
+	@Override
+	protected void setOnScrollViewContent(Object viewHolder, Object bean,
+			int position) {
+		((ViewHolder) viewHolder).img.setImageBitmap(mLoadingBitmap);
+	}
+	
 	@Override
 	protected ViewHolder initHolder(View convertView) {
 		ViewHolder holder = new ViewHolder();
