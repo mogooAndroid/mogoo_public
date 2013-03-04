@@ -15,6 +15,7 @@
  */
 package com.tsz.afinal.bitmap.core;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -111,6 +112,24 @@ public class BitmapProcess {
 			try {
 				fileInputStream.close();
 			} catch (IOException e) {
+			}
+		}
+		
+		// 解决在sd空间不足时图片不能正常加载
+		if(bitmap == null) {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			if(downloader.downloadToLocalStreamByUrl(data, outputStream)) {
+				byte[] bitmapData = outputStream.toByteArray();
+				if(neverCalculate)
+					bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+				else 
+					bitmap = BitmapDecoder.decodeSampledBitmapFromByteArray(bitmapData, config.getBitmapWidth(), config.getBitmapHeight());
+			}
+			if(outputStream != null) {
+				try {
+					outputStream.close();
+				} catch(IOException e) {
+				}
 			}
 		}
 		return bitmap;

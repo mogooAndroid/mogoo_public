@@ -76,6 +76,23 @@ public class BitmapDecoder {
 		}
     }
 
+    public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int reqWidth, int reqHeight) {
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        options.inPurgeable = true;
+        BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inJustDecodeBounds = false;
+        try {
+        	 return BitmapFactory.decodeByteArray(data, 0, data.length, options);
+		} catch (OutOfMemoryError e) {
+			 Log.e(TAG, "decodeSampledBitmapFromDescriptor内存溢出，如果频繁出现这个情况 可以尝试配置增加内存缓存大小");
+			 e.printStackTrace();
+			 return null;
+		}
+    }
+    
     public static int calculateInSampleSize(BitmapFactory.Options options,int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
