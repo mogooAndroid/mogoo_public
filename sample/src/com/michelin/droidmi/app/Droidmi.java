@@ -12,6 +12,7 @@ import com.michelin.droid.data.ConstantSet;
 import com.michelin.droid.util.EvtLog;
 import com.michelin.droid.util.IconUtils;
 import com.michelin.droidmi.data.Constants;
+import com.michelin.droidmi.download.DownloadMgr;
 
 public class Droidmi extends DroidApplicationBase {
 	private static final String TAG = Droidmi.class.getSimpleName();
@@ -44,6 +45,8 @@ public class Droidmi extends DroidApplicationBase {
 
         // Log into Droid, if we can.
         loadDroid();
+        
+        DownloadMgr.init(this);
     }
 
     public Droid getDroid() {
