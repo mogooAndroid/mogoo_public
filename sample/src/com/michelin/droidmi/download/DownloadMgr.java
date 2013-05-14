@@ -62,7 +62,7 @@ public class DownloadMgr {
 		} else {
 			list.add(downloadtask);
 			TaskProvider.insertTask(mCtx, downloadtask);
-			boolean flag = scheduleTask();
+			scheduleTask();
 			// TODO 存在下载任务通知
 			// if (scheduleTask())
 			// PdNotifications.notify(mCtx, null, 0);
@@ -79,18 +79,84 @@ public class DownloadMgr {
 		return false;
 	}
 	
+	public static void deleteTask(DownloadTask downloadtask) {
+		downloadtask.stop();
+		downloadtask.deleteFile();
+		list.remove(downloadtask);
+		TaskProvider.deleteTask(mCtx, downloadtask);
+		// TODO 取消下载任务通知
+		// if (scheduleTask())
+		// PdNotifications.notify(mCtx, null, 0);
+		// fireSystemEvent(downloadtask);
+		// PdNotifications.notify(mCtx, downloadtask.name, 6);
+	}
+	
+	public static void destroy() {
+		stopAll();
+		list.clear();
+	}
+	
+	public static DownloadTask findTask(String resourceId) {
+		DownloadTask localDownloadTask = null;
+		for(int i = 0; i< list.size(); i++) {
+			localDownloadTask = (DownloadTask) list.get(i);
+			if(localDownloadTask.resourceId.equals(resourceId))
+				break;
+		}
+		return localDownloadTask;
+	}
+	
+	public static Context getContext() {
+		return mCtx;
+	}
+	
+	public static int getCount() {
+		return list.size();
+	}
+	
+	public static List<DownloadTask> getDownloadList() {
+		return list;
+	}
+	
+	public static int getErrorCount() {
+		int count = 0;
+		for (int i = 0; i < list.size(); i++) {
+			if (((DownloadTask) list.get(i)).isError())
+				count++;
+		}
+		return count;
+	}
+	
+	public static void stopAll() {
+		for (int i = 0; i < list.size(); i++) {
+			((DownloadTask) list.get(i)).stop();
+		}
+	}
+	
+	static void pauseAllTask() {
+		for (int i = 0; i < list.size(); i++) {
+			((DownloadTask) list.get(i)).stop();
+		}
+	}
+
+	static void resumeAllTask() {
+		for (int i = 0; i < list.size(); i++) {
+			((DownloadTask) list.get(i)).resume();
+		}
+	}
+
+	static void onFinish(DownloadTask downloadtask) {
+		Message message = Message.obtain();
+		message.obj = downloadtask;
+		onFinish.sendMessage(message);
+	}
+	
 	static void scheduleTask(DownloadTask downloadtask) {
 		Message message = Message.obtain();
 		message.obj = downloadtask;
 		onSchedule.sendMessage(message);
 	}
 	
-	static void onFinish(DownloadTask downloadtask) {
-		Message message = Message.obtain();
-		message.obj = downloadtask;
-		onFinish.sendMessage(message);
-	}
-
 	static boolean scheduleTask() {
 		int i = 0;
 		for (int j = 0; j < list.size(); j++)

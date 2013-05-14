@@ -91,6 +91,10 @@ public class DownloadTask {
 			return false;
 	}
 
+	public void resume() {
+		setState(STATE_WAIT);
+	}
+	
 	public void stop() {
 		downloadFlag = false;
 		setState(STATE_PAUSED);
@@ -101,7 +105,7 @@ public class DownloadTask {
 		listenerMap.remove(obj);
 		listenerMap.put(obj, downloadtasklistener);
 	}
-
+	
 	public void setPercent(int i) {
 		percent = i;
 		fireProgressChangeEvent();
@@ -331,6 +335,13 @@ public class DownloadTask {
 			DownloadMgr.scheduleTask(this);
 	}
 
+	void removeFile() {
+		File localFile = new File(this.path);
+		if (!localFile.exists())
+			return;
+		localFile.delete();
+	}
+	
 	void rename() {
 		String str = path.substring(0, path.indexOf(ResourceUtility.tmp));
 		new File(path).renameTo(new File(str));
@@ -360,6 +371,13 @@ public class DownloadTask {
 		downloadUrl = s;
 	}
 
+	void deleteFile() {
+		File localFile = new File(this.path);
+		if (!localFile.exists())
+			return;
+		localFile.delete();
+	}
+	
 	class DownloadThread extends Thread {
 		public void run() {
 			int i = 0;
