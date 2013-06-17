@@ -16,25 +16,110 @@ import android.os.Message;
 import android.util.Log;
 
 import com.michelin.droid.download.net.NetChoose;
+import com.michelin.droid.util.TelephoneUtil;
 
 public class DownloadTask {
 	String tag = "DownloadTask";
 	static final int TIME_OUT = 20000;
+	Thread mThread;
+
 	String downloadUrl = null;
 	String path = "";
 	String name;
 	long loadSize;
 	long totalSize;
 	int percent;
+	String pkgName;
 	int state = 0;
 	String versionCode;
 	String versionName;
 	String resourceId;
+	String logoUrl;
 	int resType;
+
 	String headerMsg = "";
 	boolean downloadFlag;
+	boolean lastState_IsWifi;
 	Map<Object, DownloadTaskListener> listenerMap = new ConcurrentHashMap();
 	static long lastSendTime = System.currentTimeMillis();
+
+	void start() {
+		downloadFlag = true;
+		setState(1);
+		mThread = new DownloadThread();
+		mThread.start();
+	}
+
+	public void stop() {
+		downloadFlag = false;
+		setState(3);
+	}
+
+	class DownloadThread extends Thread {
+		@Override
+		public void run() {
+			while (true) {
+				int i;
+				try {
+					// Log.d(DownloadTask.this.tag, Thread.currentThread()
+					// .getId() + ":名称:" + DownloadTask.this.name);
+					// Log.d(DownloadTask.this.tag, Thread.currentThread()
+					// .getId()
+					// + ":downloadFlag:"
+					// + DownloadTask.this.downloadFlag);
+					i = 0;
+					if ((i < 10) && (DownloadTask.this.downloadFlag))
+						continue;
+					DownloadTask.this.downloadFlag = false;
+					DownloadMgr.scheduleTask(DownloadTask.this);
+					if (!DownloadTask.this.isError()) {
+						// PdStatisticsUtil.downloadFailureStatistics(
+						// DownloadMgr.mCtx, DownloadTask.this);
+						// PdNotifications.notify(DownloadMgr.mCtx,
+						// DownloadTask.this.name, 1);
+						return;
+					}
+					Log.d(DownloadTask.this.tag, Thread.currentThread().getId()
+							+ ":循环下载:" + i);
+					DownloadTask.this.setState(1);
+					DownloadTask.this.setNetworkConnectState();
+					if (DownloadTask.this.download(i)) {
+						DownloadTask.this.downloadFlag = false;
+						DownloadMgr.scheduleTask(DownloadTask.this);
+						return;
+					}
+				} catch (Exception localException) {
+					localException.printStackTrace();
+					return;
+				}
+				i++;
+			}
+		}
+	}
+
+	void fireStateChangeEvent() {
+		sendMsg(2);
+	}
+
+	void setNetworkConnectState() {
+		boolean flag = TelephoneUtil.isWifiEnable(DownloadMgr.mCtx);
+		// boolean flag1 = PreferenceUtil.getBoolean(DownloadMgr.mCtx,
+		// "NOTIFY_LARGE_WITHOUT_WIFI",
+		// PreferenceUtil.DEFAULT_NOTIFY_LARGE_FILE_WITHOUT_WIFI);
+		if (lastState_IsWifi && !flag/* && flag1 */) {
+			Message message = Message.obtain();
+			message.obj = this;
+			DownloadMgr.no_wifi.sendMessage(message);
+		}
+		lastState_IsWifi = flag;
+	}
+
+	void initParse(String paramString) {
+//		this.mParse = new UrlParse(paramString);
+//		initParse(this.mParse);
+		downloadUrl = paramString;
+	}
+
 	/**
 	 * 获取当前下载文件的大小
 	 * 
@@ -49,6 +134,10 @@ public class DownloadTask {
 		return length;
 	}
 
+	public boolean isError() {
+		return state == 5 || state == 6;
+	}
+
 	boolean isContentTypeSatisfy(String s) {
 		boolean flag;
 		if (s != null && !s.contains("xml") && !s.contains("json")
@@ -57,34 +146,6 @@ public class DownloadTask {
 		else
 			flag = false;
 		return flag;
-	}
-
-	public void setHeaderMsg(HttpURLConnection httpURLConnection) {
-		if (httpURLConnection != null) {
-			StringBuffer localStringBuffer = new StringBuffer();
-			Iterator localIterator1 = httpURLConnection.getHeaderFields()
-					.entrySet().iterator();
-			while (localIterator1.hasNext()) {
-				Object entry = (Map.Entry) localIterator1.next();
-				String str = (String) ((Map.Entry) entry).getKey();
-				Object entryValue = (List) ((Map.Entry) entry).getValue();
-				entry = new StringBuffer();
-				Iterator valueList = ((List) entryValue).iterator();
-				while (valueList.hasNext()) {
-					entryValue = (String) valueList.next();
-					((StringBuffer) entry).append(str + ":"
-							+ (String) entryValue);
-					((StringBuffer) entry).append("  ");
-				}
-				localStringBuffer.append((StringBuffer) entry);
-				localStringBuffer.append("\t\n");
-			}
-			this.headerMsg = localStringBuffer.toString();
-		}
-	}
-
-	public boolean isDownloading() {
-		return this.downloadFlag;
 	}
 
 	boolean download(int i) {
@@ -133,10 +194,8 @@ public class DownloadTask {
 									if (downloadFlag) {
 										int k;
 										if ((k = inputstream.read(buffer, 0,
-												4096)) <= 0) /*
-															 * goto _L15; else
-															 * goto _L19
-															 */{
+												4096)) <= 0) {
+											// goto _L15; else goto _L19
 											inputstream.close();
 											randomaccessfile.close();
 											httpUrlConnection.disconnect();
@@ -167,8 +226,8 @@ public class DownloadTask {
 						}
 					}
 				} else {
-                    setState(4);
-                    return true;
+					setState(4);
+					return true;
 				}
 
 			} catch (MalformedURLException e) {
@@ -181,6 +240,7 @@ public class DownloadTask {
 
 		return false;
 	}
+
 	/**
 	 * 计算进度
 	 * 
@@ -194,9 +254,8 @@ public class DownloadTask {
 		return i;
 	}
 
-	public void setPercent(int i) {
-		percent = i;
-		fireProgressChangeEvent();
+	public boolean isDownloading() {
+		return this.downloadFlag;
 	}
 
 	/**
@@ -233,30 +292,55 @@ public class DownloadTask {
 
 		}
 	}
-    void setState(int i)
-    {
-        if (state != 3 || i != 6 && i != 5)
-        {
-            state = i;
-            if (i == 4)
-            {
-                rename();
-                ResourceUtility.changeDirectoryPrivilege(path);
-                DownloadMgr.onFinish(this);
-            }
-            fireStateChangeEvent();
-            if (!isDownloading())
-            {
-                DownloadMgr.scheduleTask(this);
-                return;
-            }
-        }
-    }
 
-    void rename()
-    {
-        String s = path.substring(0, path.indexOf(ResourceUtility.tmp));
-        (new File(path)).renameTo(new File(s));
-        path = s;
-    }
+	public void setHeaderMsg(HttpURLConnection httpURLConnection) {
+		if (httpURLConnection != null) {
+			StringBuffer localStringBuffer = new StringBuffer();
+			Iterator localIterator1 = httpURLConnection.getHeaderFields()
+					.entrySet().iterator();
+			while (localIterator1.hasNext()) {
+				Object entry = (Map.Entry) localIterator1.next();
+				String str = (String) ((Map.Entry) entry).getKey();
+				Object entryValue = (List) ((Map.Entry) entry).getValue();
+				entry = new StringBuffer();
+				Iterator valueList = ((List) entryValue).iterator();
+				while (valueList.hasNext()) {
+					entryValue = (String) valueList.next();
+					((StringBuffer) entry).append(str + ":"
+							+ (String) entryValue);
+					((StringBuffer) entry).append("  ");
+				}
+				localStringBuffer.append((StringBuffer) entry);
+				localStringBuffer.append("\t\n");
+			}
+			this.headerMsg = localStringBuffer.toString();
+		}
+	}
+
+	public void setPercent(int paramInt) {
+		this.percent = paramInt;
+		fireProgressChangeEvent();
+	}
+
+	void setState(int i) {
+		if (state != 3 || i != 6 && i != 5) {
+			state = i;
+			if (i == 4) {
+				rename();
+				ResourceUtility.changeDirectoryPrivilege(path);
+				DownloadMgr.onFinish(this);
+			}
+			fireStateChangeEvent();
+			if (!isDownloading()) {
+				DownloadMgr.scheduleTask(this);
+				return;
+			}
+		}
+	}
+
+	void rename() {
+		String s = path.substring(0, path.indexOf(ResourceUtility.tmp));
+		(new File(path)).renameTo(new File(s));
+		path = s;
+	}
 }
