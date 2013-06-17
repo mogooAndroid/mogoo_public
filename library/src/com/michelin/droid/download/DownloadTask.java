@@ -43,6 +43,13 @@ public class DownloadTask {
 	Map<Object, DownloadTaskListener> listenerMap = new ConcurrentHashMap();
 	static long lastSendTime = System.currentTimeMillis();
 
+	public DownloadTask() {
+	}
+
+	public DownloadTask(String Url) {
+		this.downloadUrl = Url;
+	}
+
 	void start() {
 		downloadFlag = true;
 		setState(1);
@@ -115,8 +122,8 @@ public class DownloadTask {
 	}
 
 	void initParse(String paramString) {
-//		this.mParse = new UrlParse(paramString);
-//		initParse(this.mParse);
+		// this.mParse = new UrlParse(paramString);
+		// initParse(this.mParse);
 		downloadUrl = paramString;
 	}
 
@@ -166,39 +173,49 @@ public class DownloadTask {
 					}
 					httpUrlConnection.connect();
 					String contentType = httpUrlConnection.getContentType();
-					if (loadSize <= 0) {
-						if (isContentTypeSatisfy(contentType)) {
-							int length = httpUrlConnection.getContentLength();
-							if (length > 0) {
-								if (loadSize == 0) {
-									totalSize = length;
-									path = new StringBuilder(
-											ResourceUtility.getPath(this,
-													downloadUrl)).append(
-											ResourceUtility.tmp).toString();
-									// TaskProvider.updateTaskSizeAndPath(DownloadMgr.mCtx,
-									// this);
-								}
-								if (totalSize == loadSize + length) {
-									InputStream inputstream;
-									inputstream = httpUrlConnection
-											.getInputStream();
-									setHeaderMsg(httpUrlConnection);
-									byte[] buffer;
-									RandomAccessFile randomaccessfile;
-									buffer = new byte[4096];
-									randomaccessfile = new RandomAccessFile(
-											path, "rw");
-									randomaccessfile.seek(loadSize);
+					if (loadSize >= 0) {
+						String s2 = httpUrlConnection.getRequestProperty("RANGE");
+						//这里可以不要，主要是判断range的字符串跟自己写的是不是一样
+						if(!str.equals(s2)) {
+							setState(5);
+							Log.w(tag, "range的字符串不符");
+							return false;
+						}
+					}
+					if (isContentTypeSatisfy(contentType)) {
+						int length = httpUrlConnection.getContentLength();
+						if (length > 0) {
+							if (loadSize == 0) {
+								totalSize = length;
+								path = new StringBuilder(
+										ResourceUtility.getPath(this,
+												downloadUrl)).append(
+										ResourceUtility.tmp).toString();
+								// TaskProvider.updateTaskSizeAndPath(DownloadMgr.mCtx,
+								// this);
+							}
+							if (totalSize == loadSize + length) {
+								InputStream inputstream;
+								inputstream = httpUrlConnection
+										.getInputStream();
+								setHeaderMsg(httpUrlConnection);
+								byte[] buffer;
+								RandomAccessFile randomaccessfile;
+								buffer = new byte[4096];
+								randomaccessfile = new RandomAccessFile(path,
+										"rw");
+								randomaccessfile.seek(loadSize);
 
-									if (downloadFlag) {
-										int k;
+								if (downloadFlag) {
+									int k;
+									while (true) {
 										if ((k = inputstream.read(buffer, 0,
 												4096)) <= 0) {
 											// goto _L15; else goto _L19
 											inputstream.close();
 											randomaccessfile.close();
 											httpUrlConnection.disconnect();
+											return true;
 										} else {
 											randomaccessfile
 													.write(buffer, 0, k);
@@ -208,23 +225,24 @@ public class DownloadTask {
 												setPercent(i1);
 										}
 									}
-
-								} else {
-									Log.e(tag,
-											(new StringBuilder(
-													"total.size !=(loadSize + fileSize) ,bean.size:"))
-													.append(totalSize)
-													.append(",loadSize:")
-													.append(loadSize)
-													.append(",fileSize:")
-													.append(length).toString());
 								}
+
 							} else {
-								setState(5);
-								return false;
+								Log.e(tag,
+										(new StringBuilder(
+												"total.size !=(loadSize + fileSize) ,bean.size:"))
+												.append(totalSize)
+												.append(",loadSize:")
+												.append(loadSize)
+												.append(",fileSize:")
+												.append(length).toString());
 							}
+						} else {
+							setState(5);
+							return false;
 						}
 					}
+
 				} else {
 					setState(4);
 					return true;
@@ -236,8 +254,9 @@ public class DownloadTask {
 				e.printStackTrace();
 			}
 
+		} else {
+			setState(5);
 		}
-
 		return false;
 	}
 
@@ -342,5 +361,11 @@ public class DownloadTask {
 		String s = path.substring(0, path.indexOf(ResourceUtility.tmp));
 		(new File(path)).renameTo(new File(s));
 		path = s;
+	}
+
+	void deleteFile() {
+		File file = new File(path);
+		if (file.exists())
+			file.delete();
 	}
 }

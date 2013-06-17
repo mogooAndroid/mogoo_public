@@ -1,15 +1,15 @@
 package com.michelin.droid.download;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.michelin.droid.provider.PandaSpaceDatabaseHelper;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 //lcq
 public class TaskProvider {
