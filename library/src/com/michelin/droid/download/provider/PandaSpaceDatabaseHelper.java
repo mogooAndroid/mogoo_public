@@ -1,5 +1,4 @@
-
-package com.michelin.droid.provider;
+package com.michelin.droid.download.provider;
 
 import android.content.Context;
 import android.database.SQLException;
@@ -54,19 +53,19 @@ public class PandaSpaceDatabaseHelper extends SQLiteOpenHelper
 
     public void onCreate(SQLiteDatabase paramSQLiteDatabase)
     {
-//        paramSQLiteDatabase
-//                .execSQL("CREATE TABLE IF NOT EXISTS user_feedback (id int, user VARCHAR, time int, email VARCHAR, content VARCHAR);");
-//        paramSQLiteDatabase
-//                .execSQL("CREATE TABLE IF NOT EXISTS apk_download (file VARCHAR, path VARCHAR, pkg_name VARCHAR, version_code VARCHAR, state int);");
         paramSQLiteDatabase
-                .execSQL("CREATE TABLE IF NOT EXISTS   download_task(resourceId nvarchar(100) ,name nvarchar(100), size nvarchar(100),res_type nvarchar(100),path nvarchar(100),url nvarchar(500), logo_url nvarchar(100),pkg_name nvarchar(100), version_name nvarchar(100),start_time nvarchar(100),end_time nvarchar(100))");
-//        paramSQLiteDatabase
-//                .execSQL("CREATE TABLE IF NOT EXISTS act_config (act int, url VARCHAR);");
-//        paramSQLiteDatabase
-//                .execSQL("CREATE TABLE IF NOT EXISTS param_config (param int, value VARCHAR);");
-//        createTNoupdate(paramSQLiteDatabase);
-//        paramSQLiteDatabase
-//                .execSQL("CREATE TABLE IF NOT EXISTS ignore_activity (id int, activityId VARCHAR);");
+                .execSQL("CREATE TABLE IF NOT EXISTS user_feedback (id int, user VARCHAR, time int, email VARCHAR, content VARCHAR);");
+        paramSQLiteDatabase
+                .execSQL("CREATE TABLE IF NOT EXISTS apk_download (file VARCHAR, path VARCHAR, pkg_name VARCHAR, version_code VARCHAR, state int);");
+        paramSQLiteDatabase
+                .execSQL("CREATE TABLE IF NOT EXISTS   download_task(resourceId nvarchar(100) ,name nvarchar(100), size nvarchar(100),res_type nvarchar(100),path nvarchar(100),url nvarchar(500), logo_url nvarchar(100),pkg_name nvarchar(100), version_name nvarchar(100),start_time nvarchar(100),end_time nvarchar(100),rule nvarchar(100),points nvarchar(100))");
+        paramSQLiteDatabase
+                .execSQL("CREATE TABLE IF NOT EXISTS act_config (act int, url VARCHAR);");
+        paramSQLiteDatabase
+                .execSQL("CREATE TABLE IF NOT EXISTS param_config (param int, value VARCHAR);");
+        createTNoupdate(paramSQLiteDatabase);
+        paramSQLiteDatabase
+                .execSQL("CREATE TABLE IF NOT EXISTS ignore_activity (id int, activityId VARCHAR);");
     }
 
     public void onUpgrade(SQLiteDatabase paramSQLiteDatabase, int paramInt1, int paramInt2)

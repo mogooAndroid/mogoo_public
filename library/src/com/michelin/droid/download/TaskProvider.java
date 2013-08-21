@@ -19,7 +19,7 @@ public class TaskProvider {
 		excuteSQL(paramContext, "delete from download_task", null);
 	}
 
-	static void deleteTask(Context paramContext, DownloadTask paramDownloadTask) {
+	public static void deleteTask(Context paramContext, DownloadTask paramDownloadTask) {
 		Object[] arrayOfObject = new Object[2];
 		arrayOfObject[0] = paramDownloadTask.resourceId;
 		arrayOfObject[1] = paramDownloadTask.name;
@@ -33,7 +33,7 @@ public class TaskProvider {
 		SQLiteDatabase localSQLiteDatabase = null;
 		try {
 			localSQLiteDatabase = new PandaSpaceDatabaseHelper(paramContext,
-					"pandaspaceDB", null, 6).getWritableDatabase();
+					"creditsDB", null, 1).getWritableDatabase();
 			if (paramArrayOfObject != null)
 				localSQLiteDatabase.execSQL(paramString, paramArrayOfObject);
 			else {
@@ -78,48 +78,93 @@ public class TaskProvider {
 				false);
 	}
 
+	public static DownloadTask findTask(Context context, String pkgName) {
+		DownloadTask task = null;
+		if (pkgName != null) {
+			String[] arrayOfObject = new String[1];
+			arrayOfObject[0] = pkgName;
+			SQLiteDatabase dataBase = null;
+			try{
+				dataBase = new PandaSpaceDatabaseHelper(context, "creditsDB", null,
+						1).getWritableDatabase();
+				Cursor cursor = dataBase
+						.rawQuery(
+								"select resourceId,name,size,path,url,logo_url,pkg_name,version_name,res_type from download_task where pkg_name=?",
+								arrayOfObject);
+				if (cursor.moveToFirst())
+					do {
+						task = new DownloadTask();
+						task.resourceId = cursor.getString(0);
+						task.name = cursor.getString(1);
+						task.totalSize = Long.parseLong(cursor
+								.getString(2));
+						task.path = cursor.getString(3);
+						task.downloadUrl = cursor.getString(4);
+						task.logoUrl = cursor.getString(5);
+						task.pkgName = cursor.getString(6);
+						task.versionName = cursor.getString(7);
+						task.resType = cursor.getInt(8);
+						
+						task.loadSize = task
+								.getCurrentSize();
+						task.percent = task
+								.caculatePercent();
+						task.initParse(task.downloadUrl);
+					} while (cursor.moveToNext());
+				cursor.close();
+				return task;
+			} catch (Exception localException) {
+				localException.printStackTrace();
+			}finally {
+				if (dataBase != null)
+					dataBase.close();
+			}
+		} 
+		return task;
+	}
+
 	private static List<DownloadTask> loadTask(Context paramContext,
 			String paramString, boolean paramBoolean) {
-		ArrayList localArrayList = new ArrayList();
+		ArrayList<DownloadTask> localArrayList = new ArrayList<DownloadTask>();
 		SQLiteDatabase localSQLiteDatabase = null;
 		try {
 			localSQLiteDatabase = new PandaSpaceDatabaseHelper(paramContext,
-					"pandaspaceDB", null, 6).getWritableDatabase();
+					"creditsDB", null, 1).getWritableDatabase();
 			Cursor localCursor = localSQLiteDatabase
 					.rawQuery(paramString, null);
 			if (localCursor.moveToFirst())
 				do {
-					DownloadTask localDownloadTask = new DownloadTask();
-					localDownloadTask.resourceId = localCursor.getString(0);
-					localDownloadTask.name = localCursor.getString(1);
-					localDownloadTask.totalSize = Long.parseLong(localCursor
+					DownloadTask task = new DownloadTask();
+					task.resourceId = localCursor.getString(0);
+					task.name = localCursor.getString(1);
+					task.totalSize = Long.parseLong(localCursor
 							.getString(2));
-					localDownloadTask.path = localCursor.getString(3);
-					localDownloadTask.downloadUrl = localCursor.getString(4);
-					localDownloadTask.logoUrl = localCursor.getString(5);
-					localDownloadTask.pkgName = localCursor.getString(6);
-					localDownloadTask.versionName = localCursor.getString(7);
-					localDownloadTask.resType = localCursor.getInt(8);
-					localDownloadTask.loadSize = localDownloadTask
+					task.path = localCursor.getString(3);
+					task.downloadUrl = localCursor.getString(4);
+					task.logoUrl = localCursor.getString(5);
+					task.pkgName = localCursor.getString(6);
+					task.versionName = localCursor.getString(7);
+					task.resType = localCursor.getInt(8);
+					task.loadSize = task
 							.getCurrentSize();
-					localDownloadTask.percent = localDownloadTask
+					task.percent = task
 							.caculatePercent();
 					if (paramBoolean) {
-						localDownloadTask.state = 4;
-						localDownloadTask.percent = 100;
+						task.state = 4;
+						task.percent = 100;
 					}
-					localDownloadTask.initParse(localDownloadTask.downloadUrl);
-					localArrayList.add(localDownloadTask);
+					task.initParse(task.downloadUrl);
+					localArrayList.add(task);
 				} while (localCursor.moveToNext());
 			localCursor.close();
 			return localArrayList;
 		} catch (Exception localException) {
-				localException.printStackTrace();
+			localException.printStackTrace();
 		} finally {
 			if (localSQLiteDatabase != null)
 				localSQLiteDatabase.close();
-			return localArrayList;
 		}
+		return localArrayList;
 	}
 
 	static void updateTaskSizeAndPath(Context paramContext,

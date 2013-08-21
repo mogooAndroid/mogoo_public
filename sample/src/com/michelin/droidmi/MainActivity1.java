@@ -22,7 +22,7 @@ public class MainActivity1 extends Activity {
 		setContentView(R.layout.download);
 
 		String url = "http://dl.sj.91.com/msoft/91assistant_3.2.9.6_295.apk";
-		DownloadTask task = new DownloadTask(url);
+		DownloadTask task = new DownloadTask(url, "aa");
 		DownloadMgr.addTask(task);
 		
 	}

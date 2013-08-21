@@ -30,7 +30,7 @@ public abstract class DownloadTaskListener extends Handler
       }
   }
 
-  public abstract void onProgressChange(int paramInt, long paramLong);
+  public abstract void onProgressChange(int perecnt, long loadSize);
 
-  public abstract void onStateChange(int paramInt);
+  public abstract void onStateChange(int state);
 }

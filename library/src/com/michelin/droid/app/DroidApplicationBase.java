@@ -20,6 +20,6 @@ public class DroidApplicationBase extends Application {
 		super.onCreate();
 		CONTEXT = getApplicationContext();
 		CrashHandler crashHandler = CrashHandler.getInstance();
-		crashHandler.init(CONTEXT);
+		//crashHandler.init(CONTEXT);
 	}
 }

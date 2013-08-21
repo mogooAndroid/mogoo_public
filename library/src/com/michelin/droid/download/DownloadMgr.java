@@ -1,5 +1,6 @@
 package com.michelin.droid.download;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,82 +10,70 @@ import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.michelin.droid.data.SystemVal;
 import com.michelin.droid.util.TelephoneUtil;
 
 public class DownloadMgr {
 	static Context mCtx;
-	static Handler onFinish;
 	static final int MAX_TASK = 2;
-	static List<DownloadTask> list;
-	static Handler no_wifi;
-	static Handler onSchedule;
+	static List<DownloadTask> list = new ArrayList<DownloadTask>();
+
 	static String tag = "DownloadMgr";
-	static int wifi_policy;
+	static int wifi_policy = -1;
 
-	static {
-		list = new ArrayList();
-		mCtx = null;
-		wifi_policy = -1;
-		onFinish = new Handler() {
-			public void handleMessage(Message message) {
-				DownloadTask downloadtask = (DownloadTask) message.obj;
-				DownloadMgr.list.remove(downloadtask);
-				// PdNotifications.notify(DownloadMgr.mCtx, downloadtask.name,
-				// 3);
-				// AudioNotification.onFinish(DownloadMgr.mCtx,
-				// downloadtask.resType, downloadtask.path);
-				TaskProvider.deleteTask(DownloadMgr.mCtx, downloadtask);
-				// PdStatisticsUtil.downloadedStatistics(downloadtask);
-				// DownloadMgr.apkInstall(downloadtask);
-				// ApkCache.addApk(new File(downloadtask.path));
-				// if(downloadtask.path.endsWith(".mp3"))
-				// RingCache.loadRing(DownloadMgr.mCtx);
-				// if(downloadtask.isSoft())
-				// BlackList.checkBlackList(downloadtask.pkgName,
-				// downloadtask.path);
-				// DownloadMgr.fireSystemEvent(downloadtask);
-			}
-		};
-		onSchedule = new Handler() {
-			public void handleMessage(Message paramMessage) {
-				DownloadMgr.scheduleTask();
-			}
-		};
-		no_wifi = new Handler() {
-			public void handleMessage(Message paramMessage) {
-				DownloadTask localDownloadTask = (DownloadTask) paramMessage.obj;
-				localDownloadTask.stop();
-				DownloadMgr.showWifiChangeDialog(localDownloadTask);
-			}
-		};
-	}
+	static Handler onFinish = new Handler() {
+		public void handleMessage(Message message) {
+			DownloadTask downloadtask = (DownloadTask) message.obj;
+			DownloadMgr.list.remove(downloadtask);
+			// PdNotifications.notify(DownloadMgr.mCtx, downloadtask.name,
+			// 3);
+			// AudioNotification.onFinish(DownloadMgr.mCtx,
+			// downloadtask.resType, downloadtask.path);
+			TaskProvider.deleteTask(DownloadMgr.mCtx, downloadtask);
+			// PdStatisticsUtil.downloadedStatistics(downloadtask);
+			// DownloadMgr.apkInstall(downloadtask);
+			// ApkCache.addApk(new File(downloadtask.path));
+			// if(downloadtask.path.endsWith(".mp3"))
+			// RingCache.loadRing(DownloadMgr.mCtx);
+			// if(downloadtask.isSoft())
+			// BlackList.checkBlackList(downloadtask.pkgName,
+			// downloadtask.path);
+			// DownloadMgr.fireSystemEvent(downloadtask);
+		}
+	};
+	static Handler onSchedule = new Handler() {
+		public void handleMessage(Message paramMessage) {
+			DownloadMgr.scheduleTask();
+		}
+	};
+	static Handler no_wifi = new Handler() {
+		public void handleMessage(Message paramMessage) {
+			DownloadTask localDownloadTask = (DownloadTask) paramMessage.obj;
+			localDownloadTask.stop();
+			DownloadMgr.showWifiChangeDialog(localDownloadTask);
+		}
+	};
 
-	public void init(Context context) {
+	public static void init(Context context) {
 		mCtx = context;
 		destroy();
 		list = TaskProvider.loadRunningTasks(mCtx);
 		setWifiPolicy();
 		if (noWifi())
 			pauseAllTask();
-//		ApkCache.loadApk();
-		// RingCache.loadRing(mCtx);
-	}
-
-	static void pauseAllTask() {
-		for (int i = 0; i < list.size(); i++)
-			((DownloadTask) list.get(i)).stop();
+		SystemVal.init(mCtx);
 	}
 
 	static boolean noWifi() {
 		boolean flag = TelephoneUtil.isWifiEnable(mCtx);
-//		boolean flag1 = PreferenceUtil.getBoolean(mCtx,
-//				"NOTIFY_LARGE_WITHOUT_WIFI",
-//				PreferenceUtil.DEFAULT_NOTIFY_LARGE_FILE_WITHOUT_WIFI);
-		return !flag && /*flag1 &&*/ list.size() > 0;
+		// boolean flag1 = PreferenceUtil.getBoolean(mCtx,
+		// "NOTIFY_LARGE_WITHOUT_WIFI",
+		// PreferenceUtil.DEFAULT_NOTIFY_LARGE_FILE_WITHOUT_WIFI);
+		return !flag && /* flag1 && */list.size() > 0;
 	}
 
 	public static DownloadTask addTask(DownloadTask paramDownloadTask) {
-		if (!hasAdd(paramDownloadTask.downloadUrl, true)) {
+		if (!hasAdd(paramDownloadTask.downloadUrl)) {
 			list.add(0, paramDownloadTask);
 			TaskProvider.insertTask(mCtx, paramDownloadTask);
 			if (scheduleTask()) {
@@ -97,12 +86,12 @@ public class DownloadMgr {
 		return paramDownloadTask;
 	}
 
-	public static boolean hasAdd(String s, boolean paramBoolean) {
+	public static boolean hasAdd(String url) {
 		int i = 0;
 		do {
 			if (i >= list.size())
 				return false;
-			if (((DownloadTask) list.get(i)).downloadUrl.equals(s))
+			if (((DownloadTask) list.get(i)).downloadUrl.equals(url))
 				return true;
 			i++;
 		} while (true);
@@ -125,6 +114,17 @@ public class DownloadMgr {
 		list.clear();
 	}
 
+	public static DownloadTask findTask(String resourceId) {
+		DownloadTask localDownloadTask = null;
+		for (int i = 0; i < list.size(); i++) {
+			localDownloadTask = (DownloadTask) list.get(i);
+			if (localDownloadTask.resourceId.equals(resourceId)) {
+				return localDownloadTask;
+			}
+		}
+		return null;
+	}
+
 	public static void stopAll() {
 		int i = 0;
 		do {
@@ -135,6 +135,17 @@ public class DownloadMgr {
 			((DownloadTask) list.get(i)).stop();
 			i++;
 		} while (true);
+	}
+
+	static void pauseAllTask() {
+		for (int i = 0; i < list.size(); i++)
+			((DownloadTask) list.get(i)).stop();
+	}
+
+	static void resumeAllTask() {
+		for (int i = 0; i < list.size(); i++) {
+			((DownloadTask) list.get(i)).resume();
+		}
 	}
 
 	static void onFinish(DownloadTask paramDownloadTask) {
@@ -158,7 +169,7 @@ public class DownloadMgr {
 		boolean flag = true;
 		for (int k = 0; k < list.size() && downingNum < 2; k++) {
 			DownloadTask downloadtask = (DownloadTask) list.get(k);
-			if (downloadtask.state == 0 && downingNum < 2) {
+			if (downloadtask.state == DownloadTask.STATE_WAIT && downingNum < 2) {
 				// PdNotifications.notify(mCtx, downloadtask.name, 0);
 				downloadtask.start();
 				downingNum++;
@@ -173,6 +184,23 @@ public class DownloadMgr {
 
 	public static Context getContext() {
 		return mCtx;
+	}
+
+	public static int getCount() {
+		return list.size();
+	}
+
+	public static List<DownloadTask> getDownloadList() {
+		return list;
+	}
+
+	public static int getErrorCount() {
+		int count = 0;
+		for (int i = 0; i < list.size(); i++) {
+			if (((DownloadTask) list.get(i)).isError())
+				count++;
+		}
+		return count;
 	}
 
 	static void showWifiChangeDialog(DownloadTask paramDownloadTask) {

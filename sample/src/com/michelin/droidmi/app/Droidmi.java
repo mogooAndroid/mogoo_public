@@ -9,10 +9,10 @@ import android.content.pm.PackageManager.NameNotFoundException;
 
 import com.michelin.droid.app.DroidApplicationBase;
 import com.michelin.droid.data.ConstantSet;
+import com.michelin.droid.download.DownloadMgr;
 import com.michelin.droid.util.EvtLog;
 import com.michelin.droid.util.IconUtils;
 import com.michelin.droidmi.data.Constants;
-import com.michelin.droidmi.download.DownloadMgr;
 
 public class Droidmi extends DroidApplicationBase {
 	private static final String TAG = Droidmi.class.getSimpleName();
