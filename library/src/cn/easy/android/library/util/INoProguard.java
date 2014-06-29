@@ -1,0 +1,1 @@
+package cn.easy.android.library.util;/** * Title: INoProguard</p> * Description: 将实现该接口的类避开混淆，在proguard.cfg中配置</p> *	-keep public class * implements cn.easy.android.library.util.INoProguard</p> * @author lin.xr * @date 2014-6-27 下午11:23:23 */public interface INoProguard {}
