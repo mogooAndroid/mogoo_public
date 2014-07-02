@@ -18,7 +18,7 @@ import java.net.UnknownServiceException;
 
 import android.text.TextUtils;
 import android.util.Log;
-import cn.easy.android.library.data.BaseConstantSet;
+import cn.easy.android.library.data.SystemVal;
 
 /**
  * Title: EvtLog</p>
@@ -45,7 +45,7 @@ public class EvtLog {
 	 * 
 	 */
 	public static void d(String tag, String msg) {
-		if (BaseConstantSet.IS_DEBUG_LOGGABLE) {
+		if (SystemVal.IS_DEBUG_LOGGABLE) {
 			Log.d(tag, formatLogToString(tag, msg));
 		}
 	}
@@ -62,7 +62,7 @@ public class EvtLog {
 	 * 
 	 */
 	public static void d(Class<?> cls, String tag, String msg) {
-		if (BaseConstantSet.IS_DEBUG_LOGGABLE) {
+		if (SystemVal.IS_DEBUG_LOGGABLE) {
 			if (cls != null) {
 				String[] classInfo = getInvokeClassInfo(cls.getName());
 				Log.d(tag, formatLogToString(classInfo, tag, msg));
@@ -82,7 +82,7 @@ public class EvtLog {
 	 * 
 	 */
 	public static void i(String tag, String msg) {
-		if (BaseConstantSet.IS_DEBUG_LOGGABLE) {
+		if (SystemVal.IS_DEBUG_LOGGABLE) {
 			Log.i(tag, formatLogToString(tag, msg));
 		}
 	}
@@ -99,7 +99,7 @@ public class EvtLog {
 	 * 
 	 */
 	public static void i(Class<?> cls, String tag, String msg) {
-		if (BaseConstantSet.IS_DEBUG_LOGGABLE) {
+		if (SystemVal.IS_DEBUG_LOGGABLE) {
 			if (cls != null) {
 				String[] classInfo = getInvokeClassInfo(cls.getName());
 				Log.i(tag, formatLogToString(classInfo, tag, msg));
@@ -119,7 +119,7 @@ public class EvtLog {
 	 * 
 	 */
 	public static void w(String tag, String msg) {
-		if (BaseConstantSet.IS_DEBUG_LOGGABLE) {
+		if (SystemVal.IS_DEBUG_LOGGABLE) {
 			Log.w(tag, formatLogToString(tag, msg));
 		}
 	}
@@ -133,7 +133,7 @@ public class EvtLog {
 	 *            输出异常信息到控制台
 	 */
 	public static void w(String tag, Throwable exception) {
-		if (BaseConstantSet.IS_DEBUG_LOGGABLE) {
+		if (SystemVal.IS_DEBUG_LOGGABLE) {
 			Log.w(tag, exception);
 		}
 	}
@@ -150,7 +150,7 @@ public class EvtLog {
 	 * 
 	 */
 	public static void w(Class<?> cls, String tag, String msg) {
-		if (BaseConstantSet.IS_DEBUG_LOGGABLE) {
+		if (SystemVal.IS_DEBUG_LOGGABLE) {
 			if (cls != null) {
 				String[] classInfo = getInvokeClassInfo(cls.getName());
 				Log.w(tag, formatLogToString(classInfo, tag, msg));
@@ -172,7 +172,7 @@ public class EvtLog {
 	 * 
 	 */
 	public static void w(Throwable exception, String tag, String msg) {
-		if (BaseConstantSet.IS_DEBUG_LOGGABLE) {
+		if (SystemVal.IS_DEBUG_LOGGABLE) {
 			if (exception != null) {
 				String[] classInfo = getInvokeClassInfo(exception);
 				Log.w(tag, formatLogToString(classInfo, tag, msg));
@@ -192,7 +192,7 @@ public class EvtLog {
 	 * 
 	 */
 	public static void e(String tag, String msg) {
-		if (BaseConstantSet.IS_ERROR_LOGGABLE) {
+		if (SystemVal.IS_ERROR_LOGGABLE) {
 			Log.e(tag, formatLogToString(tag, msg));
 		}
 	}
@@ -204,7 +204,7 @@ public class EvtLog {
 	 * @param isShowDialog
 	 */
 	public static void e(String tag, String msg, boolean isShowDialog) {
-		if (BaseConstantSet.IS_ERROR_LOGGABLE) {
+		if (SystemVal.IS_ERROR_LOGGABLE) {
 			Log.e(tag, formatLogToString(tag, msg));
 		}
 		if (isShowDialog) {
@@ -220,7 +220,7 @@ public class EvtLog {
 	 * @param exception
 	 */
 	public static void e(String tag, Throwable exception) {
-		if (BaseConstantSet.IS_ERROR_LOGGABLE) {
+		if (SystemVal.IS_ERROR_LOGGABLE) {
 			Log.e(tag, "", exception);
 		}
 	}
@@ -237,7 +237,7 @@ public class EvtLog {
 	 * 
 	 */
 	public static void e(Class<?> cls, String tag, String msg) {
-		if (BaseConstantSet.IS_ERROR_LOGGABLE) {
+		if (SystemVal.IS_ERROR_LOGGABLE) {
 			if (cls != null) {
 				String[] classInfo = getInvokeClassInfo(cls.getName());
 				Log.e(tag, formatLogToString(classInfo, tag, msg));
@@ -259,7 +259,7 @@ public class EvtLog {
 	 * 
 	 */
 	public static void e(String tag, String msg, Throwable exception) {
-		if (BaseConstantSet.IS_ERROR_LOGGABLE) {
+		if (SystemVal.IS_ERROR_LOGGABLE) {
 			if (exception != null) {
 				String[] classInfo = getInvokeClassInfo(exception);
 				Log.e(tag, formatLogToString(classInfo, tag, msg), exception);

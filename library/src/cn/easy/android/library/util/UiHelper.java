@@ -3,6 +3,7 @@ package cn.easy.android.library.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -11,6 +12,8 @@ import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.os.Build.VERSION;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -333,5 +336,64 @@ public class UiHelper {
 		view.setDrawingCacheEnabled(true);
 		Bitmap bitmap = view.getDrawingCache(true);
 		return bitmap;
+	}
+	
+	/**
+	 * 从viewHolder中获取缓存的view
+	 * @param parentView 父视图
+	 * @param id 视图id
+	 * @return 缓存的view
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends View> T getViewFromHolder(View parentView, int id) {
+		SparseArray<View> viewHolder = (SparseArray<View>) parentView.getTag();
+		if (viewHolder == null) {
+			viewHolder = new SparseArray<View>();
+			parentView.setTag(viewHolder);
+		}
+		View childView = viewHolder.get(id);
+		if (childView == null) {
+			childView = parentView.findViewById(id);
+			viewHolder.put(id, childView);
+		}
+		return (T) childView;
+	}
+	
+	/**
+	 * 滚动列表到顶端
+	 * 
+	 * @param listView
+	 *            目标列表
+	 */
+	public static void smoothScrollListViewToTop(final ListView listView) {
+		if (listView == null) {
+			return;
+		}
+		smoothScrollListView(listView, 0);
+		Runnable runnable = new Runnable() {
+
+			@Override
+			public void run() {
+				listView.setSelection(0);
+			}
+		};
+		listView.postDelayed(runnable, 200);
+	}
+
+	/**
+	 * 滚动列表到position
+	 * 
+	 * @param listView
+	 *            目标列表
+	 * @param position
+	 *            目标位置
+	 */
+	@SuppressLint("NewApi")
+	public static void smoothScrollListView(ListView listView, int position) {
+		if (VERSION.SDK_INT > 7) {
+			listView.smoothScrollToPositionFromTop(0, 0);
+		} else {
+			listView.setSelection(position);
+		}
 	}
 }
