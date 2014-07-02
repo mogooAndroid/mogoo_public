@@ -16,12 +16,11 @@ public abstract class AbsOnLoadMoreScrollListener implements
 
 	static final String TAG = "OnLoadMoreScrollListener";
 
+	protected ListView mListView;
 	protected AbsLoadingFooter mLoadingFooter;
 
 	protected Adapter mAdapter;
-
-	protected ListView mListView;
-
+	
 	public AbsOnLoadMoreScrollListener(ListView listview,
 			AbsLoadingFooter loadingFooter, Adapter adapter) {
 		mListView = listview;
@@ -29,6 +28,9 @@ public abstract class AbsOnLoadMoreScrollListener implements
 		mAdapter = adapter;
 	}
 
+	/**
+	 * 加载下一页数据
+	 */
 	public abstract void onLoadNextPage();
 
 	@Override

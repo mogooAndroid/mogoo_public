@@ -6,7 +6,8 @@ import android.widget.AbsListView.OnScrollListener;
 import cn.easy.android.library.ui.adapter.ISlowAdapter;
 
 /**
- * Title: OnMultiScrollListener</p> Description: 列表缓加载滚动监听类</p>
+ * Title: OnMultiScrollListener</p> 
+ * Description: 列表缓加载滚动监听类</p>
  * 
  * @author lin.xr
  * @date 2014-7-1 下午4:12:12
@@ -18,6 +19,7 @@ public class OnSlowAdapterScrollListener implements
 	static final String TAG = "OnSlowAdapterScrollListener";
 
 	private ISlowAdapter mAdapter;
+	
 	private int mScrollState;
 	private boolean mStrictMode = false;
 

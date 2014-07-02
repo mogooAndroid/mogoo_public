@@ -16,6 +16,6 @@ public abstract class SlowBaseAdapter extends BaseAdapter implements
 
 	@Override
 	public void setListBusy(boolean isListBusy) {
-		mListBusy = isListBusy;		
+		mListBusy = isListBusy;
 	}
 }

@@ -20,13 +20,21 @@ public class OnMultiScrollListener implements AbsListView.OnScrollListener {
 	
 	private Map<String, OnScrollListener> mOnScrollListenerMap = new HashMap<String, AbsListView.OnScrollListener>();
 
+	/**
+	 * 添加滚动监听回调
+	 * @param key 滚动监听回调key
+	 * @param listener 滚动监听回调
+	 */
 	public synchronized void addOnScrollListener(String key,
 			OnScrollListener listener) {
 		mOnScrollListenerMap.put(key, listener);
 	}
 
-	public synchronized void removeScrollListener(String key,
-			OnScrollListener listener) {
+	/**
+	 * 移除滚动监听回调
+	 * @param key 滚动监听回调key
+	 */
+	public synchronized void removeScrollListener(String key) {
 		mOnScrollListenerMap.remove(key);
 	}
 

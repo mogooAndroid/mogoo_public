@@ -21,6 +21,6 @@ public abstract class SlowCursorAdapter extends CursorAdapter implements
 
 	@Override
 	public void setListBusy(boolean isListBusy) {
-		mListBusy = isListBusy;		
+		mListBusy = isListBusy;
 	}
 }
