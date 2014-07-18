@@ -9,14 +9,14 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
 /**
- * Title: OnMultiScrollListener</p>
- * Description: 列表多滚动监听类</p>
+ * Title: OnDelegateScrollListener</p>
+ * Description: 列表滚动监听委派类</p>
  * @author lin.xr
  * @date 2014-7-1 下午4:12:12
  */
-public class OnMultiScrollListener implements AbsListView.OnScrollListener {
+public class OnDelegateScrollListener implements AbsListView.OnScrollListener {
 
-	static final String TAG = "OnMultiScrollListener";
+	static final String TAG = "OnDelegateScrollListener";
 	
 	private Map<String, OnScrollListener> mOnScrollListenerMap = new HashMap<String, AbsListView.OnScrollListener>();
 
