@@ -1,0 +1,1 @@
+package cn.easy.android.sample.app;import android.content.Context;import cn.easy.android.library.app.BaseHttpApi;public class EasySampleHttpApi extends BaseHttpApi {		public EasySampleHttpApi(Context context) {		super(context);	}	public static final String URL_SHORT_DEBUTS = "/shots/%1$s";}

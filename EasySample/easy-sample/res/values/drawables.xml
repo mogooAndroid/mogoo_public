@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <drawable name="main_content_light">#ffffff</drawable>
+    <drawable name="horizontal_divider_bg">#d2d5e0</drawable>
+</resources>

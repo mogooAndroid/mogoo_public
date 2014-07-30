@@ -1,0 +1,1 @@
+package cn.easy.android.sample.app;import cn.easy.android.library.app.BaseHttpApi;import cn.easy.android.library.app.BaseHttpProxy;public class EasySampleHttpProxy extends BaseHttpProxy {	public EasySampleHttpProxy(BaseHttpApi httpApi) {		super(httpApi);	}}

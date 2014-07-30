@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cn.easy.android.sample"
+    android:versionCode="1"
+    android:versionName="1.0.0" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true" >
+    </supports-screens>
+
+    <application
+        android:name="cn.easy.android.sample.app.EasySampleApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="is_developing"
+            android:value="true" >
+        </meta-data>
+        <meta-data
+            android:name="debug_root_url"
+            android:value="http://api.dribbble.com" >
+        </meta-data>
+        <meta-data
+            android:name="test_root_url"
+            android:value="http://api.dribbble.com" >
+        </meta-data>
+        <meta-data
+            android:name="release_root_url"
+            android:value="http://api.dribbble.com" >
+        </meta-data>
+        <!-- MODE DEBUG : 生产线, TEST : 测试线, RELEASE : 现网 -->
+        <meta-data
+            android:name="use_server_mode"
+            android:value="RELEASE" >
+        </meta-data>
+
+        <activity
+            android:name="cn.easy.android.sample.ui.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cn.easy.android.sample.ui.SettingsActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme" >
+        </activity>
+    </application>
+
+</manifest>

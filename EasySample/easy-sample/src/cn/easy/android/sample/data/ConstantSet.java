@@ -1,0 +1,1 @@
+package cn.easy.android.sample.data;import android.content.Context;import cn.easy.android.library.data.SystemVal;public class ConstantSet extends SystemVal {	public static final int PAGE_SIZE = 20;		/**	 * 初始化应用程序常量	 * 	 * @param context	 *            上下文	 */	public static void init(Context context) {			}}
